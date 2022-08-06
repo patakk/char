@@ -15,7 +15,7 @@ var cl1, cl2, cl3, cl4;
 
 var mm;
 var WW, HH;
-var ratio = 1.33;
+var ratio = Math.sqrt(2);
 //var resx = map(fxrand(), 0, 1,  1000, 1400);
 //var resy = Math.round(1580*1000/resx);
 var resx, resy;
@@ -27,7 +27,7 @@ else{
     resx = Math.round(1400/ratio);
     resy = 1400;
 }
-resx=resy=1400;
+//resx=resy=1400;
 var res = Math.min(resx, resy);
 var zoom = .8;
 var globalseed = Math.floor(fxrand()*1000000);
@@ -41,100 +41,34 @@ var letters = 'abcdefghijklmnopqrstuvwxyz';
 var letters = '023456789';
 var letters = 'abcdeghkmnopqsuvwxyz';
 
-var randomtint = map2(Math.round(fxrand()*5)/5.);
-randomtint = brightencol(randomtint, -.1);
-randomtint = saturatecol(randomtint, -.3);
-randomtint = [.1, .1, .1]
+var randomtint = [.1, .1, .1]
 
 var pts = [];
+
+
+var variant = Math.floor(fxrand()*5);
+
 ///////
-/*function getOrthoString(value) {
-    if (value) return "yes";
-    else return "no";
-}
-function getCountString(value) {
-    if (value) return "big";
-    else return "small";
+function getVariantString(value) {
+    if (value == 0) return "hobby";
+    if (value == 1) return "spikes";
+    if (value == 2) return "windows";
+    if (value == 3) return "function composition";
+    if (value == 4) return "simulation";
 }
 
 window.$fxhashFeatures = {
-    "ortho": getOrthoString(orth),
-    "exploded": getOrthoString(crazy),
-    "mono": getOrthoString(ismono),
-    "count": getCountString(afew),
-    "uniform": getOrthoString(uniform && (!crazy)),
-}*/
+    "variant": getVariantString(variant),
+}
 ///////
 
-var palettesstrings = [
-    '121212-F05454-30475E-F5F5F5-F39189-BB8082-6E7582-046582',
-    '084c61-db504a-e3b505-4f6d7a-56a3a6-177e89-084c61-db3a34-ffc857-323031',
-    '32373b-4a5859-f4d6cc-f4b860-c83e4d-de6b48-e5b181-f4b9b2-daedbd-7dbbc3',
-    'fa8334-fffd77-ffe882-388697-54405f-ffbc42-df1129-bf2d16-218380-73d2de',
-    '3e5641-a24936-d36135-282b28-83bca9-ed6a5a-f4f1bb-9bc1bc-e6ebe0-36c9c6',
-    '304d7d-db995a-bbbbbb-222222-fdc300-664c43-873d48-dc758f-e3d3e4-00ffcd',
-    '5fad56-f2c14e-f78154-4d9078-b4431c-8789c0-45f0df-c2cae8-8380b6-111d4a',
-    '4C3A51-774360-B25068-FACB79-dddddd-2FC4B2-12947F-E71414-F17808-Ff4828',
-    '087e8b-ff5a5f-3c3c3c-f5f5f5-c1839f-1B2430-51557E-816797-D6D5A8-ff2222',
-    '4C3F61-B958A5-9145B6-FF5677-65799B-C98B70-EB5353-394359-F9D923-36AE7C-368E7C-187498',
-    '283d3b-197278-edddd4-c44536-772e25-0d3b66-faf0ca-f4d35e-ee964b-f95738-fe5d26-f2c078-faedca-c1dbb3-7ebc89-3d5a80-98c1d9-e0fbfc-ee6c4d-293241',
-    '99e2b4-99d4e2-f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1',
-    '080708-3772ff-df2935-fdca40-e6e8e6-d8dbe2-a9bcd0-58a4b0-373f51-1b1b1e',
-    'f46036-5b85aa-414770-372248-f55d3e-878e88-f7cb15-76bed0-9cfffa-acf39d-b0c592-a97c73-af3e4d',
-];
-
-var pall = '';
-palettesstrings.forEach((element, ind) => {
-    if(ind < palettesstrings.length-1)
-        pall = pall + element + '-';
-    else
-        pall = pall + element
-});
-//palettesstrings = [pall]
-
-var palettes = [];
-palettesstrings.forEach(stri => {
-  var palette = [];
-  var swatches = stri.split('-');
-  for(var s = 0; s < swatches.length; s++){
-    palette.push(hex2rgb(swatches[s]));
-  }
-  palettes.push(palette);
-})
-
-
-var palette0 = palettes[Math.floor(palettes.length*fxrand())];
-palette0 = shuffle(palette0);
-
-var mypal = createPalette();;
-
-function getRandomColor(i){
-    if (typeof i === "undefined") {
-        return mypal[Math.floor(fxrand()*mypal.length)];
-    }
-    else{
-        return getIndexColor(i);
-    }
-}
-
-function getIndexColor(i){
-    return mypal[i%mypal.length];
-}
-
-function getRandomColorOld(pal){
-    if(pal){
-        return pal[Math.floor(pal.length*fxrand())];
-    }
-    else{
-        return palette0[Math.floor(palette0.length*fxrand())];
-    }
-}
 
 function preload() {
     effect = loadShader('assets/shaders/effect.vert', 'assets/shaders/effect.frag');
     blurH = loadShader('assets/shaders/blur.vert', 'assets/shaders/blur.frag');
     blurV = loadShader('assets/shaders/blur.vert', 'assets/shaders/blur.frag');
     inconsolata = loadFont('assets/fonts/couriermb.ttf');
+    //inconsolata = loadFont('assets/fonts/helveticaneue/HelveticaNeueBd.ttf');
 }
 
 var deadness = map(fxrand(), 0, 1, 3, 16);
@@ -152,16 +86,16 @@ function getRandomRYB(p){
 
 function setup(){
     pixelDensity(2);
-    var or = windowWidth/windowHeight;
+    var or = innerWidth/innerHeight;
     var cr = resx / resy;
     var cw, ch;
 
     if(or > cr){
-        ch = windowHeight;
+        ch = innerHeight;
         cw = round(ch*cr);
     }
     else{
-        cw = windowWidth;
+        cw = innerWidth;
         ch = round(cw/cr);
     }
 
@@ -217,8 +151,9 @@ function setup(){
     }
     else{
         initSim();
+        var thth = round(random(3, 40))
         for(var k = 0; k < 46; k++){
-            if(k == 18){
+            if(k == thth){
                 engine.gravity.x = 0;
                 engine.gravity.y = 0;
             }
@@ -421,10 +356,8 @@ function showall(){
     var hue1 = fxrand();
    //effect.setUniform('tintColor', HSVtoRGB(fxrand(),.3,.9));
     //effect.setUniform('tintColor2', HSVtoRGB((hue1+.45+fxrand()*.1)%1,.3,.9));
-    var ridx1 = floor(fxrand()*palette0.length)
-    var ridx2 = floor(fxrand()*palette0.length)
-    effect.setUniform('tintColor', palette0[ridx1]);
-    effect.setUniform('tintColor2', palette0[ridx2]);
+    effect.setUniform('tintColor', [0.,0.,1.]);
+    effect.setUniform('tintColor2', [0.,0.,1.]);
 
     effectFbo.begin();
     clear();
@@ -455,15 +388,15 @@ function windowResized() {
         cw = windowWidth;
         ch = round(cw/cr);
     }
-    resizeCanvas(cw-50, ch-50);
+    resizeCanvas(cw-50, ch-50, true);
     
     var p5Canvas = document.getElementById("maincanvas");
-    var w = document.getElementById("maincanvas").offsetWidth;
-    var h = document.getElementById("maincanvas").offsetHeight;
+    var w = cw;
+    var h = ch;
     //p5Canvas.style.height = h-50 + 'px';
     //p5Canvas.style.width = w-50 + 'px';
 
-    effectFbo.draw(0, 0, width, height);
+    showall();
 }
 
 var randomstring = function(){
@@ -479,7 +412,6 @@ function drawText(){
 
     clear();
     textSize(18);
-    background(...hsv2rgb(.65, 1, .5));
     background(.05);
     background(.65, .1,.2);
     background(.65);
@@ -496,38 +428,98 @@ function drawText(){
         var y = rr*sin(a);
     }*/
 
-    var chc = floor(random(5));
-    chc = 4;
+    if(variant != 4)
+        footer();
 
-    if(chc == 0) filledRectangles();
-    if(chc == 1) textOnCurve();
-    if(chc == 2) textOnPoly();
-    if(chc == 3) mathCompostion();
-    if(chc == 4) drawSim();
-    footer();
-    runSim();
-    runSim();
-    runSim();
-    runSim();
-    runSim();
-    runSim();
-    runSim();
-    drawSim(1);
+    //if(variant == 0) filledRectangles();
+    if(variant == 0) textOnCurve(true);
+    if(variant == 1) textOnCurve(false);
+    if(variant == 2) textOnPoly();
+    if(variant == 3) mathComposition();
+    if(variant == 4){
+        drawSim(1);
+        //runSim();
+        //runSim();
+        //runSim();
+        //runSim();
+        //runSim();
+        //runSim();
+        //runSim();
+        //drawSim(1);
+    }
+
 
     pop();
 
 }
 
 function footer(){
-    var fu = 30;
-    var dd = resx-fu*2;
-    var nn = round(dd/12);
-    for(var k = 0; k < nn; k++){
-        var x = map(k, 0, nn-1, -resx/2+fu, resx/2-fu);
+    var symbs = ",*xae";
+    var symb = symbs[floor(random(symbs.length))];
+    var fu = 15;
+    var ddx = resx-fu*2;
+    var nnx = round(ddx/12);
+    for(var k = 0; k < nnx; k++){
+        var x = map(k, 0, nnx-1, -resx/2+fu, resx/2-fu);
         var y = resy/2-fu*1.;
-        text('=', x, y);
-        text('=', x, -y);
+        //text('*', x, +y);
+        //text('*', x, -y);
     }
+
+    var ddy = resy-fu*2;
+    var nny = round(ddy/12);
+    for(var k = 0; k < nny; k++){
+        var y = map(k, 0, nny-1, -resy/2+fu, resy/2-fu);
+        var x = resx/2-fu*1.;
+        //text('*', +x, y);
+        //text('*', -x, y);
+    }
+
+    var x1 = -resx/2 + fu;
+    var y1 = -resy/2 + fu;
+    var x2 = +resx/2 - fu;
+    var y2 = +resy/2 - fu;
+
+    var det = 12;
+    var nn;
+    nn = round(dist(x1,y1,x2,y1)/det);
+    fill(0.004);
+    noStroke();
+    push();
+    if(symb == '.' || symb == ','){
+        translate(0, -det/2);
+    }
+    for(var kk = 0; kk < nn; kk++){
+        var x = map(kk, 0, nn, x1, x2);
+        var y = y1;
+        text(symb, x, y);
+        if(symb!='*') text(symb, x+random(-.5,.5), y+random(-.5,.5));
+    }
+
+    nn = round(dist(x2,y1,x2,y2)/det);
+    for(var kk = 0; kk < nn; kk++){
+        var x = x2;
+        var y = map(kk, 0, nn, y1, y2);
+        text(symb, x, y);
+        if(symb!='*') text(symb, x+random(-.5,.5), y+random(-.5,.5));
+    }
+
+    nn = round(dist(x2,y2,x1,y2)/det);
+    for(var kk = 0; kk < nn; kk++){
+        var x = map(kk, 0, nn, x2, x1);
+        var y = y2;
+        text(symb, x, y);
+        if(symb!='*') text(symb, x+random(-.5,.5), y+random(-.5,.5));
+    }
+
+    nn = round(dist(x1,y2,x1,y1)/det);
+    for(var kk = 0; kk < nn; kk++){
+        var x = x1;
+        var y = map(kk, 0, nn, y2, y1);
+        text(symb, x, y);
+        if(symb!='*') text(symb, x+random(-.5,.5), y+random(-.5,.5));
+    }
+    pop();
 }
 
 var Engine = Matter.Engine,
@@ -559,6 +551,7 @@ function polyToColliders(poly){
 }
 
 var colpolys = [];
+
 function initSim(){
     
     engine = Engine.create()
@@ -600,29 +593,55 @@ function initSim(){
 
     grounds = [];
     var frq = random(0.005, 0.05);
-    for(var x = -500; x <= 540; x += random(50, 66)*2){
-        var y = 0;
-        var colpoly = [];
-        var rx = random(-500, 500);
-        var ry = random(-500, 500);
-        var rw = random(50, 280);
-        var rh = random(50, 400);
-        //colpoly.push(createVector(x+map(power(noise(x*frq, 22.9), 3), 0, 1, -100, 100), y-300));
-        //colpoly.push(createVector(x+map(power(noise(x*frq, 31.4), 3), 0, 1, -100, 100), y+300));
-        colpoly.push(createVector(rx+rw/2+0*random(-200,200), ry+rh/2+0*random(-200,200)));
-        colpoly.push(createVector(rx-rw/2+0*random(-200,200), ry+rh/2+0*random(-200,200)));
-        colpoly.push(createVector(rx-rw/2+0*random(-200,200), ry-rh/2+0*random(-200,200)));
-        colpoly.push(createVector(rx+rw/2+0*random(-200,200), ry-rh/2+0*random(-200,200)));
-        colpoly.push(colpoly[0]);
-        //grounds.push(Bodies.rectangle(rx, ry, rw, rh, {isStatic: true,label: "ground",friction: 1,frictionStatic: Infinity}));
-        colpolys.push(colpoly);
-        grounds = grounds.concat(polyToColliders(colpoly))
+    var ruru = random(5, 20);
+    var realized = 0;
+    while(realized == 0){
+        realized = 0;
+        for(var x = 0; x < ruru; x += 1){
+            var y = 0;
+            var colpoly = [];
+            var rx = random(-(resx/2-50), (resx/2-50));
+            var ry = random(-(resy/2-50), (resy/2-50));
+            var ang = floor(random(360/45))*45;
+            var r = random(100, resy);
+            var rx2 = rx + r*cos(radians(ang));
+            var ry2 = ry + r*sin(radians(ang));
+            if(rx2 > resx/2){
+                continue;
+                rx2 = resx/2 - 50;
+            }
+            if(ry2 > resy/2){
+                continue;
+                ry2 = resy/2 - 50;
+            }
+            if(rx2 < -resx/2){
+                continue;
+                rx2 = -resx/2 + 50;
+            }
+            if(ry2 < -resy/2){
+                continue;
+                ry2 = -resy/2 + 50;
+            }
+            realized++;
+            //colpoly.push(createVector(x+map(power(noise(x*frq, 22.9), 3), 0, 1, -100, 100), y-300));
+            //colpoly.push(createVector(x+map(power(noise(x*frq, 31.4), 3), 0, 1, -100, 100), y+300));
+            //colpoly.push(createVector(rx+rw/2, ry+rh/2+rh/2*random(-.5,.5)));
+            //colpoly.push(createVector(rx-rw/2, ry+rh/2+rh/2*random(-.5,.5)));
+            //colpoly.push(createVector(rx-rw/2, ry-rh/2+rh/2*random(-.5,.5)));
+            //colpoly.push(createVector(rx+rw/2, ry-rh/2+rh/2*random(-.5,.5)));
+            //colpoly.push(colpoly[0]);
+            colpoly.push(createVector(rx, ry));
+            colpoly.push(createVector(rx2, ry2));
+            //grounds.push(Bodies.rectangle(rx, ry, rw, rh, {isStatic: true,label: "ground",friction: 1,frictionStatic: Infinity}));
+            colpolys.push(colpoly);
+            grounds = grounds.concat(polyToColliders(colpoly))
+        }
     }
     var colpoly = [];
     var rx = 0;
     var ry = 0;
-    var rw = resx-60;
-    var rh = resy-60;
+    var rw = resx-33;
+    var rh = resy-33;
     //colpoly.push(createVector(x+map(power(noise(x*frq, 22.9), 3), 0, 1, -100, 100), y-300));
     //colpoly.push(createVector(x+map(power(noise(x*frq, 31.4), 3), 0, 1, -100, 100), y+300));
     colpoly.push(createVector(rx-rw/2, ry-rh/2));
@@ -669,7 +688,8 @@ function initSim(){
             //bodies.push(box);
         }
     }
-    for(var k = 0; k < 2550; k++){
+    var nunu = random(1600, 2500);
+    for(var k = 0; k < nunu; k++){
         var box = Bodies.rectangle(
             pos.x + random(-400, 400), 
             pos.y + random(-400, 400),
@@ -805,14 +825,14 @@ function drawSim(flag){
         //rect(0, 0, 10, 10);
         fill(0);
         noStroke();
-        var cc = map2(floor(random(3))/9.);
-        cc = saturatecol(cc, -.2+random(-.05, .05));
-        cc = brightencol(cc, random(-.05, .05));
+        //var cc = map2(floor(random(3))/9.);
+        //cc = saturatecol(cc, -.2+random(-.05, .05));
+        //cc = brightencol(cc, random(-.05, .05));
         fill(.9);
         if(flag)
             fill(0);
 
-        if(bodies[i].position.x < resx/2-60 && bodies[i].position.y < resy/2-60 && bodies[i].position.x > -resx/2+60 && bodies[i].position.y > -resy/2+60){
+        if(bodies[i].position.x < resx/2-35 && bodies[i].position.y < resy/2-35 && bodies[i].position.x > -resx/2+35 && bodies[i].position.y > -resy/2+35){
             text(lettr, liftx, lifty);
             text(lettr, liftx+random(-.5,.5), lifty+random(-.5,.5));
         }
@@ -838,6 +858,10 @@ function drawSim(flag){
 
     noStroke();
     fill(0);
+
+    var symbs = "*xzo";
+    var symb = symbs[floor(random(symbs.length))];
+
     for(var kk = 0; kk < colpolys.length; kk++){
 
         for(var k = 0; k < colpolys[kk].length-1; k++){
@@ -855,7 +879,7 @@ function drawSim(flag){
                 
                 var liftx = 0;
                 var lifty = 0;
-                var lettr = "*";
+                var lettr = symb;
                 if('acemnosuvwxz'.includes(lettr)){
                     lifty = -3;
                 }
@@ -892,13 +916,13 @@ function drawSim(flag){
                 if(zas)
                     continue;
 
-                fill(0);
+                fill(0.1);
                 noStroke();
                 //rect(x, y, 14, 14);
-                fill(0.65);
+                //fill(0.65);
                 noStroke();
-                //text(lettr, ttp.x, ttp.y);
-                //text(lettr, ttp.x+random(-.5,.5), ttp.y+random(-.5,.5));
+                text(lettr, ttp.x, ttp.y);
+                text(lettr, ttp.x+random(-.5,.5), ttp.y+random(-.5,.5));
             }
         }
     }
@@ -921,7 +945,7 @@ function drawSim(flag){
                 
                 var liftx = 0;
                 var lifty = 0;
-                var lettr = "*";
+                var lettr = symb;
                 if('acemnosuvwxz'.includes(lettr)){
                     lifty = -3;
                 }
@@ -969,48 +993,6 @@ function drawSim(flag){
     pop();
 }
 
-function lines(){
-    for(var qq = 0; qq < 5; qq++){
-        var cx = random(-444, 444);
-        var cy = random(-444, 444);
-        var rad = random(resx/2*.6, resx/2*.8)*1.5;
-        var nn = round(rad*2*PI/24);
-        for(var k = 0; k < nn; k++){
-            var ang1 = map(k, 0, nn, 0, 2*PI);
-            var ang2 = map(k+1, 0, nn, 0, 2*PI);
-            var x1 = cx;
-            var y1 = cy;
-            var x2 = cx + rad*cos(ang1);
-            var y2 = cy + rad*sin(ang1);
-            var x3 = cx + rad*cos(ang2);
-            var y3 = cy + rad*sin(ang2);
-            //myline(x1, y1, 0, x2, y2, 0);
-
-            var c1 = map2(.8*power(noise(qq), 3)+(k/15.)%.1);
-            var c2 = map2(.8*power(noise(qq), 3)+(k/15.)%.1 + .2);
-
-            c2 = saturatecol(c2, .1);
-            c2 = brightencol(c2, +.2);
-
-            stroke(0.01);
-            noStroke();
-            beginShape();
-            fill(...c1);
-            vertex(x1, y1, random(-10,10));
-            fill(...c2);
-            vertex(x2, y2, random(-10,10));
-            vertex(x3, y3, random(-10,10));
-            endShape();
-
-            stroke(0.01, .3);
-            if(fxrand() < .15){
-                line(x1, y1, random(-10,10), x2, y2, random(-10,10));
-            }
-
-        }
-    }
-}
-
 function getCompositionImpl(){
     var s = 'X';
     /*var rules = [
@@ -1047,25 +1029,32 @@ function getCompositionImpl(){
         '(((Q*'+v5+')|(R*'+v5+'))/'+v5+')',
         '(~R)',
         '(((Q*'+v5+')^(R*'+v5+'))/'+v5+')',
-    ]
-
-    rules = [
-        '(Q+R)',
-        '(Q*R)',
-        '(Q-R)',
-        'pow(Q,'+v4+')',
-        'pow(Q,R)',
-        'sqrt((Q-.5)*(Q-.5)-(R-.5)*(R-.5))',
-        '(.5+.5*sin('+v3+'*Q))',
-        '((Q%R)/R)',
-        '((Q%'+v1+')/'+v1+')',
-        '((R%'+v2+')/'+v2+')',
-        'abs(Q)',
-        '(((Q*'+v5+')&(R*'+v5+'))/'+v5+')',
-        '(((Q*'+v5+')|(R*'+v5+'))/'+v5+')',
-        '(((Q*'+v5+')^(R*'+v5+'))/'+v5+')',
-        'myf1(Q, R, n)',
     ]*/
+
+    var v1 = round(random(3, 30));
+    var v2 = round(random(3, 30));
+    var v5 = random(1,8);
+    rules = [
+        '(X+Y)',
+        '(X*Y)',
+        '(X*'+random(.1, 10)+')',
+        '(Y*'+random(.1, 10)+')',
+        '(X-Y)',
+        'pow(X,'+random(.5,2)+')',
+        'pow(X,Y)',
+        'sqrt((X-.5)*(X-.5)-(Y-.5)*(Y-.5))',
+        '(.5+.5*sin('+random(2, 10)+'*X))',
+        '((X%Y)/Y)',
+        '((X%'+v1+')/'+v1+')',
+        '((Y%'+v2+')/'+v2+')',
+        'abs(X)',
+        'abs(Y)',
+        '(((X*'+v5+')&(Y*'+v5+'))/'+v5+')',
+        '(((X*'+v5+')|(Y*'+v5+'))/'+v5+')',
+        '(((X*'+v5+')^(Y*'+v5+'))/'+v5+')',
+        'myf1(X, Y, '+random(5, 50)+')',
+        'noise(X*'+random(.1, 2)+', Y*'+random(.1, 2)+')',
+    ]
 
 
     for(var k = 0; k < rulelevel; k++){
@@ -1094,20 +1083,22 @@ function myf1(X, Y, nn){
 }
 
 
-function getComposition(n, rx, ry, scan){
+function getComposition(nx, ny, rx, ry, scan){
     var avgr = 0;
     var avgd = 0;
     var maxd = 0;
+    var sum = 0;
     zas = true;
     var comp = '';
-    while((maxd < .2 || avgd < .2 || avgr < .2) || zas){
+    //while((maxd < .2 || avgd < .2 || avgr < .2) || zas || sum == 0){
+    while(abs(sum) < .01 || abs(maxd) < .01 || isNaN(maxd)){
         zas = false;
         comp = getCompositionImpl();
         var vals = [];
         maxd = 0;
         var nn = 5;
         for(var j = 0; j < nn; j++){
-            for(var i = 0; i < nn; i++){
+            for(var i = 0; i < round(nn*resx/resy); i++){
                 var X = ((i+rx)%nn+1)/scan;
                 var Y = ((j+ry)%nn+1)/scan;
                 rez = (eval(comp) + 0.)%1;
@@ -1116,9 +1107,10 @@ function getComposition(n, rx, ry, scan){
                 vals.push(rez);
             }
         }
-        var sum = 0;
+        sum = 0;
         for(var k = 0; k < vals.length; k++){
-            sum += vals[k];
+            if(!isNaN(vals[k]))
+                sum += vals[k];
         }
         avgr = sum/vals.length;
     
@@ -1127,11 +1119,14 @@ function getComposition(n, rx, ry, scan){
             sumd += abs(vals[k]-avgr);
             maxd = max(maxd, abs(vals[k]-avgr));
         }
+        //print("he", sum)
+        //print("he2", maxd)
         avgd = sumd/vals.length;
-        print('hello')
-        break;
+        //print('hello')
+        //break;
+
     }
-    print(avgr, avgd, maxd)
+    //print(avgr, avgd, maxd)
     return comp;
 }
 
@@ -1149,49 +1144,54 @@ var rules = [
     '(X%Y*10.)',
     '((X%.1)/.1)',
     '(X/Y)',
-    '(.5+.5*sin(X*10.))',
-    'round(X)'
+    '(.5+.5*sin(X*3.))',
+    'round(X)',
+    '(-X)',
+    '(-Y)',
 ]
 var rulelevel = 4;
 
-function mathCompostion(){
+function mathComposition(){
     fill(0.004);
-    var cc = map2(floor(random(3))/9.);
-    cc = saturatecol(cc, -.2+random(-.05, .05));
-    cc = brightencol(cc, random(-.05, .05));
+    //var cc = map2(floor(random(3))/9.);
+    //cc = saturatecol(cc, -.2+random(-.05, .05));
+    //cc = brightencol(cc, random(-.05, .05));
     fill(0);
     noStroke();
     
     var rind = floor(random(1, letters.length-1));
     var ltrs = letters.slice(0, rind) + letters.slice(0, rind);
 
-    var det = 10;
-    var n = resx*.8/det;  
-    var dw = n*det;
-    var dh = n*det;
+    var det = 12;
+    var nx = (resx-50)/det;  
+    var ny = (resy-50)/det;  
+    var dw = nx*det;
+    var dh = ny*det;
 
-    var rx = floor(random(n))*0;
-    var ry = floor(random(n))*0;
-    var scan = random(n/10, n);
-    scan = n;
-    var comp = getComposition(n, rx, ry, scan);
-    print(comp)
+    var rx = floor(random(nx*3));
+    var ry = floor(random(ny*3));
+    var scan = random(nx/10, nx/2);
+    scan = nx;
+    var comp = getComposition(nx, ny, rx, ry, scan);
+    //print(comp)
 
-    for(var j = 0; j < n; j++){
-        for(var i = 0; i < n; i++){
-            var X = ((i+rx)%n+1)/scan;
-            var Y = ((j+ry)%n+1)/scan;
+    for(var j = 1; j < ny-1; j++){
+        for(var i = 1; i < nx-1; i++){
+            var X = ((i+rx)%nx+1)/scan;
+            var Y = ((j+ry)%ny+1)/scan;
             rez = round(eval(comp)*1000);
 
-            var x = map(i, 0, n, 0, dw) - (n-1)/2*det;
-            var y = map(j, 0, n, 0, dh) - (n-1)/2*det;
+            var x = map(i, 0, nx, 0, dw) - (nx-.5)/2*det;
+            var y = map(j, 0, ny, 0, dh) - (ny-.5)/2*det;
             
             //fill(rez);
             //rect(x, y, det, det);
-            var ola = '.-/=*caxwKHR'
+            var ola = '.-/=*caxwKHR';
+            ola = ' .,:+>roaexwW';
+            ola = ' .^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
             if(isNaN(rez))
                 rez = 0;
-            var ltr = ola[rez%ola.length];
+            var ltr = ola[abs(rez)%ola.length];
             /*ltr = ltrs[floor(rez*ltrs.length)]
             if(rez < .33)
                 ltr = ' ';
@@ -1202,13 +1202,24 @@ function mathCompostion(){
             else if(rez < 1)
                 ltr = ltrs[floor(rez*ltrs.length)];*/
             
+            var liftx = 0;
+            var lifty = 0;
+            if('acemnosuvwxz'.includes(ltr)){
+                //lifty = -3;
+            }
+            if('bdhk'.includes(ltr)){
+                //lifty = -2;
+            }
+            if('gpqy'.includes(ltr)){
+                //lifty = -4;
+            }
 
             push();
-            var cc = map2(floor(random(3))/9.);
-            cc = saturatecol(cc, -.2+random(-.05, .05));
-            cc = brightencol(cc, random(-.05, .05));
-            fill(0);
-            translate(x, y);
+            //var cc = map2(floor(random(3))/9.);
+            //cc = saturatecol(cc, -.2+random(-.05, .05));
+            //cc = brightencol(cc, random(-.05, .05));
+            translate(x+liftx, y+lifty);
+            fill(0.01);
             text(ltr, random(-.5,.5), random(-.5,.5));
             text(ltr, random(-.5,.5), random(-.5,.5));
             pop();
@@ -1247,10 +1258,10 @@ function textOnPoly(){
         var x = map(pow(fxrand(), 1), 0, 1, -resx/2+133+w/2, resx/2-133-w/2);
         //var y = map(pow(fxrand(), 1), 0, 1, -res/2+300+h/2, res/2-300-h/2);
         var y = map(pow(fxrand(), 1), 0, 1, -resy/2+133+h/2, resy/2-133-h/2);
-        w = 100 + 400*(power(noise(k*.64, 205.422), 4));
+        w = 100 + 400*(power(noise(k*.05, 205.422), 4));
         h = 100 + 900*(power(noise(k*.05, 680.71), 4));
-        x = (resx - w - 149)*(-.5 + power(noise(k*.64, 55.422), 4));
-        y = (resy - h - 149)*(-.5 + power(noise(k*.05, 21.341), 6));
+        x = (resx - w - 50)*(-.5 + power(noise(k*.05, 55.422), 4));
+        y = (resy - h - 50)*(-.5 + power(noise(k*.05, 21.341), 4));
         var pts = [];
         pts.push(createVector(x-w/2, y-h/2));
         pts.push(createVector(x+w/2, y-h/2));
@@ -1355,7 +1366,7 @@ function textOnPoly(){
     pop();
 }
 
-function textOnCurve(){
+function textOnCurve(isHobby=true){
     fill(0.004);
     noStroke();
     for(var y = -res/2; y < res/2; y+=10){
@@ -1365,11 +1376,45 @@ function textOnCurve(){
     }
 
     var pts = [];
-    for(var k = 0; k < 44; k++){
-        var x = -(resx/2-50) + 2*(resx/2-50)*(k%2);
-        var y = -(resy/2-50) + 2*(resy/2-50)*((1.*power(noise(k*1.05), 5))%1);
-        x = map(pow(fxrand(), 1), 0, 1, -(resx/2-50), (resx/2-50))*.65;
-        y = -map(pow(fxrand(), 1), 0, 1, -(resy/2-50), (resy/2-50))*.65;
+    var spread = random(.8, .9)*.3;
+    if(fxrand() < 1.5){
+        spread = .99;
+    }
+    var ququ = 144*spread;
+    ququ = random(100, 200)*.99;
+    var exx = random(.3, .6);
+    var exy = random(.3, .6);
+    if(fxrand() < .5){
+        exx = 1./exx;
+    }
+    if(fxrand() < .5){
+        exy = 1./exy;
+    }
+    var strfunx = fxrand() < .5 ? pow : power;
+    var strfuny = fxrand() < .5 ? pow : power;
+    if(strfunx == pow && strfuny == pow && false){
+        strfunx = fxrand() < .5 ? pow : power;
+        strfuny = fxrand() < .5 ? pow : power;
+    }
+    strfunx = strfuny = power;
+    exx = exy = random(3, 4);
+    var kfrq = random(.08, .4);
+    var israndom = fxrand() < .5;
+    for(var k = 0; k < ququ; k++){
+        var x = -(resx/2-30) + 2*(resx/2-30)*(k%2);
+        var y = -(resy/2-30) + 2*(resy/2-30)*((1.*power(noise(k*1.05), 5))%1);
+        if(israndom){
+            x = map(strfunx(fxrand(), exx), 0, 1, -(resx/2-30), (resx/2-30))*spread;
+            y = -map(strfuny(fxrand(), exy), 0, 1, -(resy/2-30), (resy/2-30))*spread;
+        }
+        else{
+            x = map(strfunx(noise(k*kfrq, 331.2), exx), 0, 1, -(resx/2-30), (resx/2-30))*spread;
+            y = -map(strfuny(noise(k*kfrq, 228.5), exy), 0, 1, -(resy/2-30), (resy/2-30))*spread;
+        }
+        if(k==0 && spread < .5){
+            x*=15;
+            y*=15;
+        }
         pts.push(createVector(x, y));
         //pts.push([-.4*resx/2 + 2*.4*resx/2*(k%2)+random(-55/2, 55/2), random(-.4*resx/2, .4*resx/2)]);
     }
@@ -1409,7 +1454,8 @@ function textOnCurve(){
             npts.push(createVector(x, y));
         }
     }
-    //hobbypts = npts;
+    if(!isHobby)
+        hobbypts = npts;
 
     stroke(0.004);
     strokeWeight(2);
@@ -1417,6 +1463,13 @@ function textOnCurve(){
     fill(0.004);
     noStroke();
     var wasf = letters[floor(random(letters.length))];
+
+    var subletters = "acemnorsuvwxyz"
+    var ola = '.^",:;!i><~+-?/tfjrxnmwqpdbkhao*';
+    var lettr = subletters[floor(random(subletters.length))];
+    var fff = random(.001, .03);
+    var modk = round(random(10, 200));
+    var shf = floor(random(ola.length));
     for(var k = 0; k < hobbypts.length; k++){
         var zas = false;
         var ang = 0;
@@ -1428,6 +1481,13 @@ function textOnCurve(){
         if(abs(ang) > PI/2){
             //ang = ang + PI;
         }
+
+        if(abs(pt.x) > resx/2-40 || abs(pt.y) > resy/2-40)
+            zas = true;
+
+        if(zas)
+            continue;
+
         if(k > 1){
             for(var w = 0; w < k-1; w++){
                 var wpt = hobbypts[w];
@@ -1435,8 +1495,7 @@ function textOnCurve(){
                     zas = true;
             }
         }
-        if(abs(pt.x) > resx/2-50 || abs(pt.y) > resy/2-50)
-            zas = true;
+
         if(zas)
             continue;
 
@@ -1449,6 +1508,10 @@ function textOnCurve(){
         fill(0.004);
         noStroke();
         translate(x, y);
+
+        //rect(0, 0, 14, 14);
+        //  fill(0.65);
+
         //rotateZ(ang);
         //text(k%10, 0, 0);
         //var wasf = letters[floor(random(letters.length))];
@@ -1457,7 +1520,10 @@ function textOnCurve(){
         
         var liftx = 0;
         var lifty = 0;
-        var lettr = "g";
+        //lettr = ola[round(k*fff + shf)%ola.length];
+        if(k%modk == 0){
+            lettr = ola[floor(random(ola.length))];
+        }
         if('acemnosuvwxz'.includes(lettr)){
             lifty = -3;
         }
@@ -1518,12 +1584,12 @@ function filledRectangles(){
         
         var polyrr = reducePoly(poly, 10);
         noStroke();
-        stroke(...map2(fxrand()));
+        //stroke(...map2(fxrand()));
         var aaa = round(fxrand()*5)/5.;
         while(aaa == 0.8 || aaa == 0.4){
             aaa = round(fxrand()*5)/5.;
         }
-        stroke(...map2(aaa));
+        //stroke(...map2(aaa));
         strokeWeight(4);
         fill(.1 + it/6.);
         noFill();
@@ -1535,7 +1601,7 @@ function filledRectangles(){
         endShape(CLOSE);
     
         fill(0.7);
-        fill(...map2(round(fxrand()*5)/5.));
+        //fill(...map2(round(fxrand()*5)/5.));
         fill(0.004);
         noStroke();
         for(var k = 0; k < polypts.length; k++){
@@ -1573,16 +1639,16 @@ function filledRectangles(){
             if('gpqy'.includes(lettr)){
                 lifty = -4;
             }
-            var cc = map2(floor(random(3))/9.);
-            cc = saturatecol(cc, -.2+random(-.05, .05));
+            //var cc = map2(floor(random(3))/9.);
+            //cc = saturatecol(cc, -.2+random(-.05, .05));
             cc = brightencol(cc, random(-.05, .05));
-            fill(0);
+            //fill(0);
             text(lettr, liftx, lifty);
             text(lettr, liftx+random(-.5,.5), lifty+random(-.5,.5));
             //charFbos[letters[idx]].draw(0, 0, 20, 20)
             //charFbos[letters[idx]].draw(random(-.5,.5), random(-.5,.5), random(-.5,.5), random(-.5,.5), 20, 20)
             push();
-            fill(...map2(0.0));
+            //fill(...map2(0.0));
             //ellipse(0, 0, 3, 3);
             pop();
             pop();
@@ -1617,12 +1683,12 @@ function filledPolys(){
         
         var polyrr = reducePoly(poly, 0);
         noStroke();
-        stroke(...map2(fxrand()));
+        //stroke(...map2(fxrand()));
         var aaa = round(fxrand()*5)/5.;
         while(aaa == 0.8 || aaa == 0.4){
             aaa = round(fxrand()*5)/5.;
         }
-        stroke(...map2(aaa));
+        //stroke(...map2(aaa));
         strokeWeight(4);
         fill(.1 + it/6.);
         noFill();
@@ -1634,7 +1700,7 @@ function filledPolys(){
         endShape(CLOSE);
     
         fill(0.7);
-        fill(...map2(round(fxrand()*5)/5.));
+        //fill(...map2(round(fxrand()*5)/5.));
         fill(0.004);
         noStroke();
         for(var k = 0; k < polypts.length; k++){
@@ -1677,7 +1743,7 @@ function filledPolys(){
             //charFbos[letters[idx]].draw(0, 0, 20, 20)
             //charFbos[letters[idx]].draw(random(-.5,.5), random(-.5,.5), random(-.5,.5), random(-.5,.5), 20, 20)
             push();
-            fill(...map2(0.0));
+            //fill(...map2(0.0));
             //ellipse(0, 0, 3, 3);
             pop();
             pop();
@@ -1939,94 +2005,7 @@ function reducePoly(poly, amp){
 
 
 var accas = fxrand()*6.28;
-var paalsh = Math.round(fxrand()*mypal.length/2);
 var ooo = Math.round(1+3*fxrand());
-function drawColorViz(pgr){
-    pgr.push();
-    //pg.translate(random(-.5,.5), random(-.5,.5), 0);
-    //pg.rotateZ(radians(random(-2,2)));
-    pgr.clear();
-    pgr.background(.12);
-    pgr.rectMode(CENTER);
-
-    pgr.noStroke();
-    var Nx = 9;
-    var Ny = 9;
-    var dd = 40;
-    var ppp = 1;
-    for(var j = 0; j < Ny; j++){
-        for(var i = 0; i < Nx; i++){
-            var x = i*dd - dd*(Nx-1)/2;
-            var y = j*dd - dd*(Ny-1)/2;
-            //var rcd = getRandomColor(j*Nx+i);
-            //pgr.fill(...rcd);
-            var idd = round(ppp*((i+1)*(i+1)*1*(j+1)+j+i*ooo));
-            idd = idd%(mypal.length+paalsh);
-            rcd1 = getRandomColor(idd);
-            rcd2 = getRandomColor(idd+1);
-            pgr.fill(...rcd1);
-            pgr.rect(x, y, dd+1, dd+1);
-            //pgr.beginShape();
-            //pgr.fill(...rcd1);
-            //pgr.vertex(x + (dd/2+1), y - (dd/2+1));
-            //pgr.vertex(x + (dd/2+1), y + (dd/2+1));
-            //pgr.fill(...rcd2);
-            //pgr.vertex(x - (dd/2+1), y + (dd/2+1));
-            //pgr.vertex(x - (dd/2+1), y - (dd/2+1));
-            //pgr.endShape();
-        }
-    }
-    for(var k = 0; k < mypal.length; k++){
-        var x = k*dd - dd*(mypal.length-1)/2;
-        var y = -dd*(Ny-1)/2 - dd*3;
-        
-        var ccc = getRandomColor(k);
-        pgr.fill(...ccc);
-        pgr.rect(x, y, dd+1, dd+1);
-    }
-
-    var kp = 6;
-    for(var k = 0; k < kp; k++){
-        var pp = map(k, 0, kp, 0, 1);
-        var x = k*dd - dd*kp/2;
-        var y = +dd*(Ny-1)/2 + 3*dd;
-
-        var ccc = map2(pp);
-        ccc = brightencol(ccc, 0);
-        ccc = saturatecol(ccc, 0);
-        pgr.fill(...ccc);
-        //pg.rect(x, y, dd+1, dd+1);
-        
-        pgr.fill(...hsv2rgb(pp, 1., 1.));
-        //pgr.rect(x, y+2*dd, dd+1, dd+1);
-    }
-
-    pgr.push();
-    pgr.translate(0, res/4+30, 0);
-    var cn = round(36 / mypal.length) * mypal.length;
-    for(var k = 0; k < cn; k++){
-        var ang1 = map(k, 0, cn-1, 0, 2*PI);
-        var ang2 = map(k+1, 0, cn-1, 0, 2*PI);
-        var x1 = 100 * cos(ang1);
-        var y1 = 100 * sin(ang1);
-        var x2 = 100 * cos(ang2);
-        var y2 = 100 * sin(ang2);
-        var ccc1 = getRandomColor();
-        var ccc2 = getRandomColor();
-        var ccc3 = getRandomColor();
-        pgr.noStroke();
-        pgr.beginShape();
-        pgr.fill(...ccc1);
-        pgr.vertex(0, 0);
-        pgr.vertex(x1, y1);
-        pgr.fill(...ccc2);
-        pgr.vertex(x2, y2);
-        pgr.endShape();
-    }
-    pgr.pop();
-
-    pgr.pop();
-}
 
 function max(a, b){
     if(a >= b)
@@ -2040,46 +2019,6 @@ function min(a, b){
     return b;
 }
 
-function createPalette(){
-    var cshif = fxrand();
-    var invsat = Math.round(fxrand());
-    var invs1 = Math.round(fxrand());
-    var invb1 = Math.round(fxrand());
-    var invs2 = Math.round(fxrand());
-    var invb2 = Math.round(fxrand());
-    var invs3 = Math.round(fxrand());
-    var nc = Math.round(fxrand()*3 + 3);
-    var range = Math.round(2 + fxrand()*7)*100/360;
-    var off1 = 90*(.5 + Math.floor(fxrand()*2)/2);
-    var off2 = 180*(.5 + Math.floor(fxrand()*2)/2);
-
-    var colors = [];
-    for(var k = 0; k < nc; k++){
-        var ang = (k%nc)*(360/nc)/360 + cshif;
-        if(k%nc < nc-2){
-           ang = ((k%nc)*(360/nc)/360*range)%range + cshif;
-        }
-        else if(k%nc < nc-1){
-           ang = max(off1/360., ((k%nc)*(360/nc)/360*range)%range+15/360.) + cshif;
-        }
-        else{
-           ang = off2/360. + cshif;
-        }
-
-        var cryb = map2(ang%1.);
-
-        if((k+1)%nc < nc-2) cryb = saturatecol(cryb, .4*(-1+2*invsat)*(-1+2*invs1));
-        if((k+1)%nc < nc-2) cryb = brightencol(cryb, +.3*(-1+2*invsat)*(-1+2*invb1));
-        if((k+1)%nc == nc-1) cryb = saturatecol(cryb, -.5*(-1+2*invsat)*(-1+2*invs2));
-        if((k+1)%nc == nc-1) cryb = brightencol(cryb, -.5*(-1+2*invsat)*(-1+2*invb2));
-        if((k+1)%nc == nc-2) cryb = saturatecol(cryb, +.5*(-1+2*invsat)*(-1+2*invs3));
-        if((k+1)%nc == nc-2) cryb = brightencol(cryb, +.0);
-
-        colors.push(cryb);
-    }
-
-    return colors;
-}
 
 /*
 var cshif = fxrand();

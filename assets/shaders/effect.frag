@@ -210,8 +210,8 @@ void main() {
     float margy = 10./u_resolution.y + .00031*(-.5 + fff(uv*182.1 + 281.3131,seed+25.61 ));
     if(uv0.x < margx || uv0.x > 1.-margx || uv0.y < margy || uv0.y > 1.-margy){
         //outc = vec4(.7);
-        outc = vec4(.05);
-        outc = vec4(incolor.rgb, 1.);
+        //outc = vec4(.05);
+        //outc = vec4(incolor.rgb, 1.);
         //blurred_original = vec4(.1);
     }
     if(hasmargin > 0.01){
@@ -254,7 +254,6 @@ void main() {
     //pepper = randomNoise(uv+seed/1000000.+1.3+.3143+u_time*.0000+fbm(uv)*.02);
     //pepper = .00*(smoothstep(.8, .999, pepper));
     //outc.rgb -= pepper;
-
 
     gl_FragColor = vec4(outc.rgb, 1.);
     //gl_FragColor = vec4(vec3(salt*5.),1.);
