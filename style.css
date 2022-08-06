@@ -26,4 +26,6 @@ canvas {
 
 .loadingclass{
   font-family: "Courier new";
+  font-size: 12px;
+  font-weight: bold;
 }

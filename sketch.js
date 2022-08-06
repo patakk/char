@@ -428,8 +428,7 @@ function drawText(){
         var y = rr*sin(a);
     }*/
 
-    if(variant != 4)
-        footer();
+    footer();
 
     //if(variant == 0) filledRectangles();
     if(variant == 0) textOnCurve(true);
@@ -455,6 +454,7 @@ function drawText(){
 
 function footer(){
     var symbs = ",*xae";
+    symbs = "*xz";
     var symb = symbs[floor(random(symbs.length))];
     var fu = 15;
     var ddx = resx-fu*2;
@@ -593,7 +593,7 @@ function initSim(){
 
     grounds = [];
     var frq = random(0.005, 0.05);
-    var ruru = random(5, 20);
+    var ruru = random(5, 50);
     var realized = 0;
     while(realized == 0){
         realized = 0;
@@ -649,7 +649,7 @@ function initSim(){
     colpoly.push(createVector(rx+rw/2, ry+rh/2));
     colpoly.push(createVector(rx-rw/2, ry+rh/2));
     colpoly.push(createVector(rx-rw/2, ry-rh/2));
-    colpolys.push(colpoly);
+    //colpolys.push(colpoly);
     grounds = grounds.concat(polyToColliders(colpoly))
 
     //var it = 0;
@@ -859,7 +859,7 @@ function drawSim(flag){
     noStroke();
     fill(0);
 
-    var symbs = "*xzo";
+    var symbs = "*#";
     var symb = symbs[floor(random(symbs.length))];
 
     for(var kk = 0; kk < colpolys.length; kk++){
@@ -1173,7 +1173,7 @@ function mathComposition(){
     var scan = random(nx/10, nx/2);
     scan = nx;
     var comp = getComposition(nx, ny, rx, ry, scan);
-    //print(comp)
+    print(comp)
 
     for(var j = 1; j < ny-1; j++){
         for(var i = 1; i < nx-1; i++){
@@ -1381,7 +1381,7 @@ function textOnCurve(isHobby=true){
         spread = .99;
     }
     var ququ = 144*spread;
-    ququ = random(100, 200)*.99;
+    ququ = random(190, 200)*.99;
     var exx = random(.3, .6);
     var exy = random(.3, .6);
     if(fxrand() < .5){
@@ -1428,7 +1428,7 @@ function textOnCurve(isHobby=true){
     }
 
     var knots = makeknots(pts, 1, true);
-    var hobbypts = gethobbypoints(knots, true, 11);
+    var hobbypts = gethobbypoints(knots, true, 10);
 
     //pts = [];
     for(var k = 0; k < 117; k++){
@@ -1443,7 +1443,7 @@ function textOnCurve(isHobby=true){
         var pt = pts[(k+0)%pts.length];
         var npt = pts[(k+1)%pts.length];
 
-        var det = 12;
+        var det = 10;
         var d = pt.dist(npt);
         var parts = 2+round(d/det);
         for(var pa = 0; pa < parts; pa++){
