@@ -1204,13 +1204,16 @@ var rules = [
     '(-X)',
     '(-Y)',
 ]
-var rulelevel = 4;
+var rulelevel = 4 + Math.floor(3*Math.random());
+rulelevel = 4;
 
 function mathComposition(){
     fill(0.004);
     //var cc = map2(floor(random(3))/9.);
     //cc = saturatecol(cc, -.2+random(-.05, .05));
     //cc = brightencol(cc, random(-.05, .05));
+    push();
+    scale(1.1);
     fill(0);
     noStroke();
     
@@ -1228,6 +1231,7 @@ function mathComposition(){
     var scan = random(nx/10, nx/2);
     scan = nx;
     var comp = getComposition(nx, ny, rx, ry, scan);
+    var comp2 = getComposition(nx, ny, rx, ry, scan);
     print(comp)
 
     var ola = '.-/=*caxwKHR';
@@ -1241,6 +1245,8 @@ function mathComposition(){
             var X = ((i+rx)%nx+1)/scan;
             var Y = ((j+ry)%ny+1)/scan;
             rez = round(eval(comp)*100);
+
+            rez2 = round(eval(comp2) * 100);
 
 
             var x = map(i, 0, nx, 0, dw) - (nx-.5)/2*det;
@@ -1279,15 +1285,39 @@ function mathComposition(){
             //cc = brightencol(cc, random(-.05, .05));
             textSize(14);
             translate(x+liftx, y+lifty);
+
+            push();
+            translate(0, 0, 1);
+            var va = 0;
+            var va2 = 0;
+            va = abs(rez) / 1000.;
+            va2 = abs(rez2) / 1000.;
+            if (isNaN(va))
+                va = 0.;
+            if (!isFinite(va))
+                va = fxrand();
+            if (isNaN(va2))
+                va2 = 0.;
+            if (!isFinite(va2))
+                va2 = fxrand();
+            
+            var c1 = map2((va + .05) % 1.);
+            var c2 = map2((va + .05) % 1.);
+            c1 = brightencol(c1, .5*(-.5 + va2))
+            c2 = brightencol(c2, .5*(-.5 + va2))
+            fill(...c1);
+            rect(0, 0, 10, 10);
+            fill(...c2);
+            rect(0, 0, 5, 5);
+            pop();
+
             fill(0.01);
-            text(ltr, 0, 0);
-            text(ltr, random(-.5, .5), random(-.5, .5));
-            fill((abs(rez + olash) % ola.length) / ola.length);
-            //fill(constrain(rez, 0, 1));
-            //rect(0, 0, 10, 10);
+            //text(ltr, 0, 0);
+            //text(ltr, random(-.5, .5), random(-.5, .5));
             pop();
         } 
     } 
+    pop();
 
     //stroke(1,0,0);
     //line(-1000,-1000,1000,1000)
