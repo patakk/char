@@ -47,7 +47,6 @@ var pts = [];
 
 
 var variant = Math.floor(fxrand()*5);
-
 ///////
 function getVariantString(value) {
     if (value == 0) return "hobby";
@@ -602,23 +601,24 @@ function initSim(){
             var colpoly = [];
             var rx = random(-(resx/2-50), (resx/2-50));
             var ry = random(-(resy/2-50), (resy/2-50));
-            var ang = floor(random(360/45))*45;
+            var ang = floor(random(360/90))*90;
+            ang = 0;
             var r = random(100, resy);
             var rx2 = rx + r*cos(radians(ang));
             var ry2 = ry + r*sin(radians(ang));
-            if(rx2 > resx/2){
+            if(rx2 > (resx/2-30)){
                 continue;
                 rx2 = resx/2 - 50;
             }
-            if(ry2 > resy/2){
+            if(ry2 > (resy/2-30)){
                 continue;
                 ry2 = resy/2 - 50;
             }
-            if(rx2 < -resx/2){
+            if(rx2 < -(resx/2-30)){
                 continue;
                 rx2 = -resx/2 + 50;
             }
-            if(ry2 < -resy/2){
+            if(ry2 < -(resy/2-30)){
                 continue;
                 ry2 = -resy/2 + 50;
             }
@@ -994,7 +994,7 @@ function drawSim(flag){
 }
 
 function getCompositionImpl(){
-    var s = 'X';
+    var s = 'X+Y';
     /*var rules = [
         '(Q+R)',
         '(Q*R)',
@@ -1033,28 +1033,78 @@ function getCompositionImpl(){
 
     var v1 = round(random(3, 30));
     var v2 = round(random(3, 30));
-    var v5 = random(1,8);
+    var v5 = random(1, 8);
     rules = [
         '(X+Y)',
         '(X*Y)',
-        '(X*'+random(.1, 10)+')',
-        '(Y*'+random(.1, 10)+')',
+        '(X/Y)',
+        '(Y/X)',
+        '(X*' + random(.1, 10) + ')',
+        '(Y*' + random(.1, 10) + ')',
         '(X-Y)',
-        'pow(X,'+random(.5,2)+')',
+        'pow(X,' + random(.5, 2) + ')',
         'pow(X,Y)',
         'sqrt((X-.5)*(X-.5)-(Y-.5)*(Y-.5))',
-        '(.5+.5*sin('+random(2, 10)+'*X))',
+        '(.5+.5*sin(' + random(2, 10) + '*X))',
+        '(.5+.5*sin(' + random(2, 10) + '*Y))',
         '((X%Y)/Y)',
-        '((X%'+v1+')/'+v1+')',
-        '((Y%'+v2+')/'+v2+')',
+        '((X%' + v1 + ')/' + v1 + ')',
+        '((Y%' + v2 + ')/' + v2 + ')',
         'abs(X)',
         'abs(Y)',
-        '(((X*'+v5+')&(Y*'+v5+'))/'+v5+')',
-        '(((X*'+v5+')|(Y*'+v5+'))/'+v5+')',
-        '(((X*'+v5+')^(Y*'+v5+'))/'+v5+')',
-        'myf1(X, Y, '+random(5, 50)+')',
-        'noise(X*'+random(.1, 2)+', Y*'+random(.1, 2)+')',
+        '(((X*' + v5 + ')&(Y*' + v5 + '))/' + v5 + ')',
+        '(((X*' + v5 + ')|(Y*' + v5 + '))/' + v5 + ')',
+        '(((X*' + v5 + ')^(Y*' + v5 + '))/' + v5 + ')',
+        'myf1(X, Y, ' + random(5, 50) + ')',
+        'noise(X*' + random(.1, 2) + ', Y*' + random(.1, 2) + ')',
+        '1/X',
+        '1/Y',
     ]
+
+    var rules = [];
+    for (var k = 0; k < 15; k++) {
+        var v1 = round(random(3, 30));
+        var v2 = round(random(3, 30));
+        var v5 = random(1, 8);
+        var trules = [
+            '(X+Y)',
+            '(X*Y)',
+            '(-X)',
+            '(-Y)',
+            'pow(X,' + random(.5, 2) + ')',
+            'pow(X,Y)',
+            '(.5+.5*sin(' + random(.1, .52) + '*X + ' + random(.1, .52) + '*Y + ' + random(.1, .52) + '))',
+            'noise(X*' + random(.1, 2) + ', Y*' + random(.1, 2) + ')',
+            '(round(X*'+'10*Y'+')/'+'10*Y'+')',
+            '(X+Y)',
+            '(X*Y)',
+            '(X*' + random(.1, 10) + ')',
+            '(Y*' + random(.1, 10) + ')',
+            '(X-Y)',
+            '(X+' + random(.1, 5) + ')',
+            '(Y+' + random(.1, 5) + ')',
+            'pow(X,' + random(.5, 2) + ')',
+            'pow(X,Y)',
+            'sqrt((X-.5)*(X-.5)-(Y-.5)*(Y-.5))',
+            '(.5+.5*sin(' + random(2, 10) + '*X))',
+            '(.5+.5*sin(' + random(2, 10) + '*Y))',
+            '((X%Y)/Y)',
+            '((X%' + v1 + ')/' + v1 + ')',
+            '((Y%' + v2 + ')/' + v2 + ')',
+            'abs(X)',
+            'abs(Y)',
+            '(((X*' + v5 + ')&(Y*' + v5 + '))/' + v5 + ')',
+            '(((X*' + v5 + ')|(Y*' + v5 + '))/' + v5 + ')',
+            '(((X*' + v5 + ')^(Y*' + v5 + '))/' + v5 + ')',
+            'myf1(X, Y, ' + random(5, 50) + ')',
+            'noise(X*' + random(.1, 2) + ', Y*' + random(.1, 2) + ')',
+            '(1/X)',
+            '(1/Y)',
+            '(X/Y)',
+            '(Y/X)',
+        ]
+        rules = rules.concat(trules);
+    }
 
 
     for(var k = 0; k < rulelevel; k++){
@@ -1091,7 +1141,7 @@ function getComposition(nx, ny, rx, ry, scan){
     zas = true;
     var comp = '';
     //while((maxd < .2 || avgd < .2 || avgr < .2) || zas || sum == 0){
-    while(abs(sum) < .01 || abs(maxd) < .01 || isNaN(maxd)){
+    while(sum < .1 || maxd < .01 || isNaN(maxd)){
         zas = false;
         comp = getCompositionImpl();
         var vals = [];
@@ -1099,8 +1149,8 @@ function getComposition(nx, ny, rx, ry, scan){
         var nn = 5;
         for(var j = 0; j < nn; j++){
             for(var i = 0; i < round(nn*resx/resy); i++){
-                var X = ((i+rx)%nn+1)/scan;
-                var Y = ((j+ry)%nn+1)/scan;
+                var X = ((i+rx)%nn+1)/nn;
+                var Y = ((j+ry)%nn+1)/nn;
                 rez = (eval(comp) + 0.)%1;
                 if(isNaN(rez))
                     zas = true;
@@ -1119,14 +1169,13 @@ function getComposition(nx, ny, rx, ry, scan){
             sumd += abs(vals[k]-avgr);
             maxd = max(maxd, abs(vals[k]-avgr));
         }
-        //print("he", sum)
-        //print("he2", maxd)
+        print("he", sum)
+        print("he2", maxd)
         avgd = sumd/vals.length;
         //print('hello')
-        //break;
 
     }
-    //print(avgr, avgd, maxd)
+    print(avgr, avgd, maxd)
     return comp;
 }
 
@@ -1162,7 +1211,7 @@ function mathComposition(){
     var rind = floor(random(1, letters.length-1));
     var ltrs = letters.slice(0, rind) + letters.slice(0, rind);
 
-    var det = 12;
+    var det = 8;
     var nx = (resx-50)/det;  
     var ny = (resy-50)/det;  
     var dw = nx*det;
@@ -1175,23 +1224,27 @@ function mathComposition(){
     var comp = getComposition(nx, ny, rx, ry, scan);
     print(comp)
 
-    for(var j = 1; j < ny-1; j++){
+    var ola = '.-/=*caxwKHR';
+    ola = ' .,:+>roaexwW';
+    ola = ' .,:+>roaexwWwxeaor<+:,.';
+    ola = ' .^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
+    var olash = floor(random(ola.length));
+
+    for (var j = 1; j < ny-1; j++){
         for(var i = 1; i < nx-1; i++){
             var X = ((i+rx)%nx+1)/scan;
             var Y = ((j+ry)%ny+1)/scan;
-            rez = round(eval(comp)*1000);
+            rez = round(eval(comp)*100);
+
 
             var x = map(i, 0, nx, 0, dw) - (nx-.5)/2*det;
             var y = map(j, 0, ny, 0, dh) - (ny-.5)/2*det;
             
             //fill(rez);
             //rect(x, y, det, det);
-            var ola = '.-/=*caxwKHR';
-            ola = ' .,:+>roaexwW';
-            ola = ' .^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
-            if(isNaN(rez))
+            if (isNaN(rez))
                 rez = 0;
-            var ltr = ola[abs(rez)%ola.length];
+            var ltr = ola[abs(rez+olash)%ola.length];
             /*ltr = ltrs[floor(rez*ltrs.length)]
             if(rez < .33)
                 ltr = ' ';
@@ -1218,10 +1271,14 @@ function mathComposition(){
             //var cc = map2(floor(random(3))/9.);
             //cc = saturatecol(cc, -.2+random(-.05, .05));
             //cc = brightencol(cc, random(-.05, .05));
+            textSize(14);
             translate(x+liftx, y+lifty);
             fill(0.01);
-            text(ltr, random(-.5,.5), random(-.5,.5));
-            text(ltr, random(-.5,.5), random(-.5,.5));
+            text(ltr, 0, 0);
+            text(ltr, random(-.5, .5), random(-.5, .5));
+            fill((abs(rez + olash) % ola.length) / ola.length);
+            //fill(constrain(rez, 0, 1));
+            //rect(0, 0, 10, 10);
             pop();
         } 
     } 
@@ -1415,6 +1472,8 @@ function textOnCurve(isHobby=true){
             x*=15;
             y*=15;
         }
+        x *= 2;
+        y *= 2;
         pts.push(createVector(x, y));
         //pts.push([-.4*resx/2 + 2*.4*resx/2*(k%2)+random(-55/2, 55/2), random(-.4*resx/2, .4*resx/2)]);
     }
