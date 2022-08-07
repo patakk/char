@@ -50,6 +50,8 @@ var pts = [];
 
 var variant = search.get('variant') || Math.floor(fxrand() * 5);
 
+if(variant > 4)
+    variant = 4;
 
 ///////
 function getVariantString(value) {
