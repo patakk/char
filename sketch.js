@@ -46,7 +46,11 @@ var randomtint = [.1, .1, .1]
 var pts = [];
 
 
-var variant = Math.floor(fxrand()*5);
+//var variant = Math.floor(fxrand()*5);
+
+var variant = search.get('variant') || Math.floor(fxrand() * 5);
+
+
 ///////
 function getVariantString(value) {
     if (value == 0) return "hobby";
