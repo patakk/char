@@ -1483,8 +1483,8 @@ function textOnCurve(isHobby=true){
             x*=15;
             y*=15;
         }
-        x *= 2;
-        y *= 2;
+        x *= zoom;
+        y *= zoom;
         pts.push(createVector(x, y));
         //pts.push([-.4*resx/2 + 2*.4*resx/2*(k%2)+random(-55/2, 55/2), random(-.4*resx/2, .4*resx/2)]);
     }
