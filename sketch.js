@@ -1463,6 +1463,11 @@ function textOnCurve(isHobby=true){
     exx = exy = random(3, 4);
     var kfrq = random(.08, .4);
     var israndom = fxrand() < .5;
+    var zoom = 1;
+    if(fxrand() < .5){
+        zoom = random(1, 2);
+    }
+
     for(var k = 0; k < ququ; k++){
         var x = -(resx/2-30) + 2*(resx/2-30)*(k%2);
         var y = -(resy/2-30) + 2*(resy/2-30)*((1.*power(noise(k*1.05), 5))%1);
