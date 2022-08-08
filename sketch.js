@@ -48,10 +48,10 @@ var pts = [];
 
 //var variant = Math.floor(fxrand()*5);
 
-var variant = search.get('variant') || Math.floor(fxrand() * 5);
+var variant = search.get('variant') || Math.floor(fxrand() * 6);
 
-if(variant > 4)
-    variant = 4;
+if(variant > 5)
+    variant = 5;
 
 ///////
 function getVariantString(value) {
@@ -60,6 +60,7 @@ function getVariantString(value) {
     if (value == 2) return "windows";
     if (value == 3) return "function composition";
     if (value == 4) return "simulation";
+    if (value == 5) return "simulation";
 }
 
 window.$fxhashFeatures = {
@@ -451,6 +452,7 @@ function drawText(){
         //runSim();
         //drawSim(1);
     }
+    if (variant == 5) textParallels();
 
 
     pop();
@@ -599,6 +601,7 @@ function initSim(){
     grounds = [];
     var frq = random(0.005, 0.05);
     var ruru = random(5, 50);
+    ruru = 10;
     var realized = 0;
     while(realized == 0){
         realized = 0;
@@ -640,6 +643,7 @@ function initSim(){
             colpoly.push(createVector(rx2, ry2));
             //grounds.push(Bodies.rectangle(rx, ry, rw, rh, {isStatic: true,label: "ground",friction: 1,frictionStatic: Infinity}));
             colpolys.push(colpoly);
+
             grounds = grounds.concat(polyToColliders(colpoly))
         }
     }
@@ -1213,7 +1217,6 @@ function mathComposition(){
     //cc = saturatecol(cc, -.2+random(-.05, .05));
     //cc = brightencol(cc, random(-.05, .05));
     push();
-    scale(1.1);
     fill(0);
     noStroke();
     
@@ -1238,6 +1241,7 @@ function mathComposition(){
     ola = ' .,:+>roaexwW';
     ola = ' .,:+>roaexwWwxeaor<+:,.';
     ola = ' .^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
+    ola = ' .,:-+>roaexwxeaor<+-:,.';
     var olash = floor(random(ola.length));
 
     for (var j = 1; j < ny-1; j++){
@@ -1306,14 +1310,14 @@ function mathComposition(){
             c1 = brightencol(c1, .5*(-.5 + va2))
             c2 = brightencol(c2, .5*(-.5 + va2))
             fill(...c1);
-            rect(0, 0, 10, 10);
+            //rect(0, 0, 10, 10);
             fill(...c2);
-            rect(0, 0, 5, 5);
+            //rect(0, 0, 5, 5);
             pop();
 
             fill(0.01);
-            //text(ltr, 0, 0);
-            //text(ltr, random(-.5, .5), random(-.5, .5));
+            text(ltr, 0, 0);
+            text(ltr, random(-.5, .5), random(-.5, .5));
             pop();
         } 
     } 
@@ -1459,6 +1463,168 @@ function textOnPoly(){
     pop();
 }
 
+function textParallels(){
+    fill(0.004);
+    noStroke();
+
+    var pts = [];
+    var pts1 = [];
+    var pts2 = [];
+    var frq = 0.008;
+    var shx = random(-300, 300);
+    for(var kk = 0; kk < 1; kk++){
+        for (var step = 0; step < 100; step++) {
+            var x = resx * (-.5 + power(noise(step * frq, 314.17+kk*33.323), 3));
+            var y = resy * (-.5 + power(noise(step * frq, 111.28+kk*33.323), 3));
+
+            if (step % 2 == 0) {
+                //x = resx * (-.5 + power(noise(step * frq, 314.17), 3));
+                //y = resy * (-.5 + power(noise(step * frq, 111.28), 3));
+                pts.push(createVector(x, y));
+                pts.push(createVector(x + shx, y + 700));
+            }
+            else {
+                //x = resx * (-.5 + power(noise(step * frq, 228.58), 3));
+                //y = resy * (-.5 + power(noise(step * frq, 955.99), 3));
+                pts.push(createVector(x, y));
+                pts.push(createVector(x + shx, y - 700));
+            }
+
+
+            if (noise(step * 0.015) < .5) {
+                //pts.push(createVector(x, resy/2*.8));
+            }
+
+            push();
+            fill(1 - step % 2, 0, step % 2);
+            //ellipse(x, y, 9, 9);
+            pop();
+        }
+    }
+    
+
+    var npts = [];
+    for (var k = 0; k < pts.length; k+=2) {
+        var pt = pts[(k + 0) % pts.length];
+        var npt = pts[(k + 1) % pts.length];
+
+        var det = 10;
+        var d = pt.dist(npt);
+        var parts = 2 + round(d / det);
+        for (var pa = 0; pa < parts; pa++) {
+            var p = map(pa, 0, parts, 0, 1);
+            var x = lerp(pt.x, npt.x, p);
+            var y = lerp(pt.y, npt.y, p);
+
+            npts.push(createVector(x, y));
+        }
+    }
+    
+    var parallPoints = npts;
+
+    stroke(0.004);
+    strokeWeight(2);
+    noFill();
+    fill(0.004);
+    noStroke();
+    var wasf = letters[floor(random(letters.length))];
+
+    var subletters = "acemnorsuvwxyz"
+    var ola = '.^",:;!i><~+-?/tfjrxnmwqpdbkhao*';
+    var lettr = subletters[floor(random(subletters.length))];
+    var fff = random(.001, .03);
+    var modk = round(random(10, 200));
+    var shf = floor(random(ola.length));
+    for (var k = 0; k < parallPoints.length; k++) {
+        var zas = false;
+        var ang = 0;
+        var pt = parallPoints[k];
+        var ppt = parallPoints[(k - 1 + parallPoints.length) % parallPoints.length];
+        var npt = parallPoints[(k + 1) % parallPoints.length];
+        var dir = p5.Vector.sub(npt, ppt);
+        ang = dir.heading();
+        if (abs(ang) > PI / 2) {
+            //ang = ang + PI;
+        }
+
+        if (abs(pt.x) > resx / 2 - 40 || abs(pt.y) > resy / 2 - 40)
+            zas = true;
+
+        if (zas)
+            continue;
+
+        if (k > 1) {
+            for (var w = 0; w < k - 1; w++) {
+                var wpt = parallPoints[w];
+                if (wpt.dist(pt) < 10)
+                    zas = true;
+            }
+        }
+
+        if (zas)
+            continue;
+
+        var x = pt.x;
+        var y = pt.y;
+
+        push();
+        fill(.1, .1, .2);
+        fill(1);
+        fill(0.004);
+        noStroke();
+        translate(x, y);
+
+        //rect(0, 0, 14, 14);
+        //  fill(0.65);
+
+        //rotateZ(ang);
+        //text(k%10, 0, 0);
+        //var wasf = letters[floor(random(letters.length))];
+        //wasf = harry[k%harry.length];
+        //wasf = 'a';
+
+        var liftx = 0;
+        var lifty = 0;
+        //lettr = ola[round(k*fff + shf)%ola.length];
+        lettr = 'o';
+        lettr = ola[floor(ola.length*(1.-k/parallPoints.length))];
+
+        if (k % modk == 0) {
+            lettr = ola[floor(random(ola.length))];
+        }
+        if ('acemnosuvwxz'.includes(lettr)) {
+            lifty = -3;
+        }
+        if ('bdhk'.includes(lettr)) {
+            lifty = -2;
+        }
+        if ('gpqy'.includes(lettr)) {
+            lifty = -4;
+        }
+        text(lettr, liftx, lifty);
+        text(lettr, liftx + random(-.5, .5), lifty + random(-.5, .5));
+        //ellipse(0, 0, 5, 5);
+        pop();
+
+        push();
+        fill(.35);
+        fill(.1, .1, .2);
+        noStroke();
+        translate(x, y);
+        //rect(0, 0, 17, 17);
+        pop();
+
+        var pt = parallPoints[(k - 1 + parallPoints.length) % parallPoints.length];
+        var x = pt.x;
+        var y = pt.y;
+        push();
+        fill(.7, .2, .3);
+        translate(x, y, k);
+        //text(k%10, 0, 0);
+        pop();
+    }
+}
+
 function textOnCurve(isHobby=true){
     fill(0.004);
     noStroke();
@@ -1485,18 +1651,22 @@ function textOnCurve(isHobby=true){
     }
     var strfunx = fxrand() < .5 ? pow : power;
     var strfuny = fxrand() < .5 ? pow : power;
-    if(strfunx == pow && strfuny == pow && false){
+    if(strfunx == pow && strfuny == pow){
         strfunx = fxrand() < .5 ? pow : power;
         strfuny = fxrand() < .5 ? pow : power;
     }
-    strfunx = strfuny = power;
-    exx = exy = random(3, 4);
+    //strfunx = strfuny = power;
     var kfrq = random(.08, .4);
     var israndom = fxrand() < .5;
     var zoom = 1;
-    if(fxrand() < .5){
-        zoom = random(1, 2);
+    if (fxrand() < .5 && (strfunx == power || strfuny == power)){
+        //zoom = random(1, 2);
     }
+
+    print(strfunx)
+    print(strfuny)
+    print(exx)
+    print(exy)
 
     for(var k = 0; k < ququ; k++){
         var x = -(resx/2-30) + 2*(resx/2-30)*(k%2);
@@ -1510,14 +1680,16 @@ function textOnCurve(isHobby=true){
             y = -map(strfuny(noise(k*kfrq, 228.5), exy), 0, 1, -(resy/2-30), (resy/2-30))*spread;
         }
         if(k==0 && spread < .5){
-            x*=15;
-            y*=15;
+            //x*=15;
+            //y*=15;
         }
         x *= zoom;
         y *= zoom;
         pts.push(createVector(x, y));
         //pts.push([-.4*resx/2 + 2*.4*resx/2*(k%2)+random(-55/2, 55/2), random(-.4*resx/2, .4*resx/2)]);
     }
+
+    /////// reskaliratiiiiii
     
     for(var k = 0; k < 155; k++){
         var y = map(k, 0, 155, -resy/2+100, resy/2-100);
@@ -1591,7 +1763,7 @@ function textOnCurve(isHobby=true){
         if(k > 1){
             for(var w = 0; w < k-1; w++){
                 var wpt = hobbypts[w];
-                if(wpt.dist(pt) < 10)
+                if(wpt.dist(pt) < 8)
                     zas = true;
             }
         }
