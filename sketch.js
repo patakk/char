@@ -434,7 +434,8 @@ function drawText(){
         var y = rr*sin(a);
     }*/
 
-    footer();
+    if (variant == 3) footer('.');
+    else footer();
 
     //if(variant == 0) filledRectangles();
     if(variant == 0) textOnCurve(true);
@@ -459,10 +460,12 @@ function drawText(){
 
 }
 
-function footer(){
+function footer(thesymb){
     var symbs = ",*xae";
     symbs = "*xz";
     var symb = symbs[floor(random(symbs.length))];
+    if (thesymb)
+        symb = thesymb;
     var fu = 15;
     var ddx = resx-fu*2;
     var nnx = round(ddx/12);
@@ -611,7 +614,7 @@ function initSim(){
             var rx = random(-(resx/2-50), (resx/2-50));
             var ry = random(-(resy/2-50), (resy/2-50));
             var ang = floor(random(360/90))*90;
-            ang = 0;
+            //ang = 0;
             var r = random(100, resy);
             var rx2 = rx + r*cos(radians(ang));
             var ry2 = ry + r*sin(radians(ang));
@@ -671,7 +674,7 @@ function initSim(){
     //grounds.push(Bodies.rectangle(pos.x+ddim/2, pos.y+0, 10, ddim, {isStatic: true,label: "ground"+(it++),friction: 1,frictionStatic: Infinity}));
     var ddx = 180;
     var ddy = 880;
-    var detx = 10;
+    var detx = 8;
     var dety = 10;
     var partsx = round(ddx/detx);
     var partsy = round(ddy/dety);
@@ -821,6 +824,7 @@ function drawSim(flag){
         var lifty = 0;
         var lettr = letters[floor(random(letters.length))];
         var lettr = letters[i%letters.length];
+        lettr = 'a';
         if('acemnosuvwxz'.includes(lettr)){
             lifty = -3;
         }
@@ -1024,21 +1028,21 @@ function getCompositionImpl(){
     ]
 
     var rules2 = [
-        '(Q+R)',
-        '(Q*R)',
-        '(Q-R)',
-        'pow(Q,'+v4+')',
-        'pow(Q,R)',
-        'sqrt((Q-.5)*(Q-.5)-(R-.5)*(R-.5))',
-        '(.5+.5*sin('+v3+'*Q))',
-        '((Q%R)/R)',
-        '((Q%'+v1+')/'+v1+')',
-        '((R%'+v2+')/'+v2+')',
-        'abs(Q)',
-        '(((Q*'+v5+')&(R*'+v5+'))/'+v5+')',
-        '(((Q*'+v5+')|(R*'+v5+'))/'+v5+')',
-        '(~R)',
-        '(((Q*'+v5+')^(R*'+v5+'))/'+v5+')',
+        '(X+Y)',
+        '(X*Y)',
+        '(X-Y)',
+        'pow(X,'+v4+')',
+        'pow(X,Y)',
+        'sXYt((X-.5)*(X-.5)-(Y-.5)*(Y-.5))',
+        '(.5+.5*sin('+v3+'*X))',
+        '((X%Y)/Y)',
+        '((X%'+v1+')/'+v1+')',
+        '((Y%'+v2+')/'+v2+')',
+        'abs(X)',
+        '(((X*'+v5+')&(Y*'+v5+'))/'+v5+')',
+        '(((X*'+v5+')|(Y*'+v5+'))/'+v5+')',
+        '(~Y)',
+        '(((X*'+v5+')^(Y*'+v5+'))/'+v5+')',
     ]*/
 
     var v1 = round(random(3, 30));
@@ -1223,34 +1227,36 @@ function mathComposition(){
     var rind = floor(random(1, letters.length-1));
     var ltrs = letters.slice(0, rind) + letters.slice(0, rind);
 
-    var det = 8;
+    var det = 10;
     var nx = (resx-50)/det;  
     var ny = (resy-50)/det;  
     var dw = nx*det;
     var dh = ny*det;
 
-    var rx = floor(random(nx*3));
-    var ry = floor(random(ny*3));
+    var rx = floor(random(nx*3))*0;
+    var ry = floor(random(ny*3))*0;
     var scan = random(nx/10, nx/2);
     scan = nx;
     var comp = getComposition(nx, ny, rx, ry, scan);
-    var comp2 = getComposition(nx, ny, rx, ry, scan);
+    //var comp2 = getComposition(nx, ny, rx, ry, scan);
     print(comp)
 
     var ola = '.-/=*caxwKHR';
     ola = ' .,:+>roaexwW';
-    ola = ' .,:+>roaexwWwxeaor<+:,.';
     ola = ' .^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
-    ola = ' .,:-+>roaexwxeaor<+-:,.';
+    ola = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^ ';
+    ola = ' .,:+>roaexwWwxeaor<+:,.';
+
     var olash = floor(random(ola.length));
 
     for (var j = 1; j < ny-1; j++){
         for(var i = 1; i < nx-1; i++){
             var X = ((i+rx)%nx+1)/scan;
-            var Y = ((j+ry)%ny+1)/scan;
-            rez = round(eval(comp)*100);
+            var Y = ((j+ry)%ny+1)/scan*resy/resx;
+            rez = round(eval(comp) * 100);
+            //rez = round((atan(eval(comp)) / PI + .5) * 1000);
 
-            rez2 = round(eval(comp2) * 100);
+            rez2 = round(eval(comp) * 100);
 
 
             var x = map(i, 0, nx, 0, dw) - (nx-.5)/2*det;
@@ -1287,7 +1293,7 @@ function mathComposition(){
             //var cc = map2(floor(random(3))/9.);
             //cc = saturatecol(cc, -.2+random(-.05, .05));
             //cc = brightencol(cc, random(-.05, .05));
-            textSize(14);
+            //(14);
             translate(x+liftx, y+lifty);
 
             push();
@@ -1383,10 +1389,34 @@ function textOnPoly(){
     //var pts = [];
 
 
+    var qqq = ' .,:+>roaexwW';
+    qqq = ' .,:+>roaexwWwxeaor<+:,.';
+    qqq = ' .,:-+>roaexwxeaor<+-:,.';
+    qqq = ' :;!i><+-rxnuvczmwqpdbkhao*';
+    var subletters = "x+-/\\o:ae~";
+    if (fxrand() < .5) subletters = qqq;
+    var olas = [
+        'x+',
+        '\\/',
+        'o-',
+    ];
+    var ola = olas[floor(fxrand() * olas.length)];
+    ola = '';
+    var nuq = round(random(2, 8));
+    for (var q = 0; q < nuq; q++) {
+        ola += subletters[floor(fxrand() * subletters.length)];
+    }
+
+    if(fxrand() < .5){
+        ola = 'abcdeghkmnopqsuvwxyz';
+    }
+
     var allpolypts = [];
     for(var q = 0; q < polys.length; q++){
         var pts = polys[q];
-        var hasf = letters[floor(random(fxrand()*letters.length))];
+        var hasf = letters[floor(random(fxrand() * letters.length))];
+        hasf = ola[floor(random(fxrand()*ola.length))];
+
         var polypts = [];
         for(var k = 0; k < pts.length; k++){
             var pt = pts[(k+0)%pts.length];
@@ -1427,7 +1457,25 @@ function textOnPoly(){
 
                 if(zas)
                     continue;
-                    polypts
+                    
+
+
+                var liftx = 0;
+                var lifty = 0;
+                if ('acemnosuvwxz:;/\\'.includes(hasf)) {
+                    lifty = -3;
+                }
+                if ('bdhk+-'.includes(hasf)) {
+                    lifty = -2;
+                }
+                if ('gpqy'.includes(hasf)) {
+                    lifty = -4;
+                }
+                if (',._'.includes(hasf)) {
+                    lifty = -8;
+                }
+
+
                 //if(noise(q) < .3 && q < polys.length-1){
                 if(q == 3 || q == 20){
                     push();
@@ -1438,7 +1486,7 @@ function textOnPoly(){
                     pop();
 
                     push();
-                    translate(x, y);
+                    translate(x+liftx, y+lifty);
                     if((0.2126*randomtint[0] + 0.7152*randomtint[1] + 0.0722*randomtint[2]) < .4)
                         fill(0.6);
                     else
@@ -1449,7 +1497,7 @@ function textOnPoly(){
                 }
                 else{
                     push();
-                    translate(x, y);
+                    translate(x+liftx, y+lifty);
                     text(hasf, 0, 0);
                     text(hasf, random(-.5,.5), random(-.5,.5));
                     pop();
@@ -1634,63 +1682,82 @@ function textOnCurve(isHobby=true){
         //text("hello", x,y);
     }
 
-    var pts = [];
-    var spread = random(.8, .9)*.3;
-    if(fxrand() < 1.5){
+
+    var area = 0;
+    var itt = 0;
+    var israndom = fxrand() < .5;
+
+    var spread = random(.8, .9) * .3;
+    if (fxrand() < 1.5) {
         spread = .99;
     }
-    var ququ = 144*spread;
-    ququ = random(190, 200)*.99;
-    var exx = random(.3, .6);
-    var exy = random(.3, .6);
-    if(fxrand() < .5){
-        exx = 1./exx;
-    }
-    if(fxrand() < .5){
-        exy = 1./exy;
-    }
-    var strfunx = fxrand() < .5 ? pow : power;
-    var strfuny = fxrand() < .5 ? pow : power;
-    if(strfunx == pow && strfuny == pow){
-        strfunx = fxrand() < .5 ? pow : power;
-        strfuny = fxrand() < .5 ? pow : power;
-    }
-    //strfunx = strfuny = power;
+    var ququ = 144 * spread;
+    var ququ = random(50, 200);
     var kfrq = random(.08, .4);
-    var israndom = fxrand() < .5;
-    var zoom = 1;
-    if (fxrand() < .5 && (strfunx == power || strfuny == power)){
-        //zoom = random(1, 2);
-    }
-
-    print(strfunx)
-    print(strfuny)
-    print(exx)
-    print(exy)
-
-    for(var k = 0; k < ququ; k++){
-        var x = -(resx/2-30) + 2*(resx/2-30)*(k%2);
-        var y = -(resy/2-30) + 2*(resy/2-30)*((1.*power(noise(k*1.05), 5))%1);
-        if(israndom){
-            x = map(strfunx(fxrand(), exx), 0, 1, -(resx/2-30), (resx/2-30))*spread;
-            y = -map(strfuny(fxrand(), exy), 0, 1, -(resy/2-30), (resy/2-30))*spread;
-        }
-        else{
-            x = map(strfunx(noise(k*kfrq, 331.2), exx), 0, 1, -(resx/2-30), (resx/2-30))*spread;
-            y = -map(strfuny(noise(k*kfrq, 228.5), exy), 0, 1, -(resy/2-30), (resy/2-30))*spread;
-        }
-        if(k==0 && spread < .5){
-            //x*=15;
-            //y*=15;
-        }
-        x *= zoom;
-        y *= zoom;
-        pts.push(createVector(x, y));
-        //pts.push([-.4*resx/2 + 2*.4*resx/2*(k%2)+random(-55/2, 55/2), random(-.4*resx/2, .4*resx/2)]);
-    }
-
-    /////// reskaliratiiiiii
     
+    var pts = [];
+    while (area < 800000) {
+        var exx = random(.3, .6);
+        var exy = random(.3, .6);
+        if(fxrand() < .5){
+            exx = 1./exx;
+        }
+        if(fxrand() < .5){
+            exy = 1./exy;
+        }
+        var strfunx = fxrand() < .5 ? pow : power;
+        var strfuny = fxrand() < .5 ? pow : power;
+        if(strfunx == pow && strfuny == pow){
+            strfunx = fxrand() < .5 ? pow : power;
+            strfuny = fxrand() < .5 ? pow : power;
+        }
+        //strfunx = strfuny = power;
+        var zoom = 1;
+        if (fxrand() < .25){
+            }
+
+        pts = [];
+        for (var k = 0; k < ququ; k++) {
+            var x = -(resx / 2 - 30) + 2 * (resx / 2 - 30) * (k % 2);
+            var y = -(resy / 2 - 30) + 2 * (resy / 2 - 30) * ((1. * power(noise(k * 1.05), 5)) % 1);
+            if (israndom) {
+                x = map(strfunx(fxrand(), exx), 0, 1, -(resx / 2 - 30), (resx / 2 - 30)) * spread;
+                y = -map(strfuny(fxrand(), exy), 0, 1, -(resy / 2 - 30), (resy / 2 - 30)) * spread;
+            }
+            else {
+                x = map(strfunx(noise(k * kfrq+itt*122.31, itt*222.31+331.2), exx), 0, 1, -(resx / 2 - 30), (resx / 2 - 30)) * spread;
+                y = -map(strfuny(noise(k * kfrq+itt*122.31, itt*103.31+228.5), exy), 0, 1, -(resy / 2 - 30), (resy / 2 - 30)) * spread;
+            }
+            if (k == 0 && spread < .5) {
+                //x*=15;
+                //y*=15;
+            }
+            pts.push(createVector(x, y));
+            //pts.push([-.4*resx/2 + 2*.4*resx/2*(k%2)+random(-55/2, 55/2), random(-.4*resx/2, .4*resx/2)]);
+        }
+
+        var minx = 10000;
+        var miny = 10000;
+        var maxx = -10000;
+        var maxy = -10000;
+        for (var k = 0; k < pts.length; k++) {
+            if (pts[k].x < minx) minx = pts[k].x;
+            if (pts[k].y < miny) miny = pts[k].y;
+            if (pts[k].x > maxx) maxx = pts[k].x;
+            if (pts[k].y > maxy) maxy = pts[k].y;
+        }
+        area = (maxx - minx) * (maxy - miny);
+        itt+=1;
+    }
+    if(ququ < 100){
+        var zoom = random(1, 2);
+        var zoomed = [];
+        for (var k = 0; k < pts.length; k++) {
+            zoomed.push(createVector(pts[k].x * zoom, pts[k].y * zoom));
+        }
+        pts = zoomed;
+    }
+
     for(var k = 0; k < 155; k++){
         var y = map(k, 0, 155, -resy/2+100, resy/2-100);
         y = map(fxrand(), 0, 1, -resy/2, resy/2)
@@ -1715,7 +1782,7 @@ function textOnCurve(isHobby=true){
         var pt = pts[(k+0)%pts.length];
         var npt = pts[(k+1)%pts.length];
 
-        var det = 10;
+        var det = 13;
         var d = pt.dist(npt);
         var parts = 2+round(d/det);
         for(var pa = 0; pa < parts; pa++){
@@ -1736,11 +1803,33 @@ function textOnCurve(isHobby=true){
     noStroke();
     var wasf = letters[floor(random(letters.length))];
 
-    var subletters = "acemnorsuvwxyz"
-    var ola = '.^",:;!i><~+-?/tfjrxnmwqpdbkhao*';
-    var lettr = subletters[floor(random(subletters.length))];
+
+    var qqq = ' .,:+>roaexwW';
+    qqq = ' .,:+>roaexwWwxeaor<+:,.';
+    qqq = ' .,:-+>roaexwxeaor<+-:,.';
+    qqq = ' :;!i><~+-][}{)(/rxnuvczmwqpdbkhao*';
+    var subletters = "x+-/\\o:ae~";
+    if(fxrand() < .5) subletters = qqq;
+    var olas = [
+        'x+',
+        '\\/',
+        'o-',
+    ];
+    var ola = olas[floor(fxrand() * olas.length)];
+    ola = '';
+    var nuq = round(random(2, 16));
+    for(var q = 0; q < nuq; q++){
+        ola += subletters[floor(fxrand()*subletters.length)];
+    }
+
+    if (fxrand() < .5) {
+        ola = 'abcdehkmnosuvwxz';
+    }
+
+    var lettr = ola[floor(random(ola.length))];
     var fff = random(.001, .03);
     var modk = round(random(10, 200));
+    print(ola, modk)
     var shf = floor(random(ola.length));
     for(var k = 0; k < hobbypts.length; k++){
         var zas = false;
@@ -1763,7 +1852,7 @@ function textOnCurve(isHobby=true){
         if(k > 1){
             for(var w = 0; w < k-1; w++){
                 var wpt = hobbypts[w];
-                if(wpt.dist(pt) < 8)
+                if(wpt.dist(pt) < 10)
                     zas = true;
             }
         }
@@ -1796,14 +1885,18 @@ function textOnCurve(isHobby=true){
         if(k%modk == 0){
             lettr = ola[floor(random(ola.length))];
         }
-        if('acemnosuvwxz'.includes(lettr)){
+
+        if ('acemnosuvwxz:;/\\'.includes(lettr)) {
             lifty = -3;
         }
-        if('bdhk'.includes(lettr)){
+        if ('bdhk+-'.includes(lettr)) {
             lifty = -2;
         }
-        if('gpqy'.includes(lettr)){
+        if ('gpqy'.includes(lettr)) {
             lifty = -4;
+        }
+        if (',._'.includes(lettr)) {
+            lifty = -8;
         }
 
         text(lettr, liftx, lifty);
