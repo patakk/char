@@ -51,7 +51,7 @@ var pts = [];
 var variant = search.get('variant') || Math.floor(fxrand() * 6);
 
 if(variant > 5)
-    variant = 5;
+    variant = Math.floor(fxrand() * 6);
 
 ///////
 function getVariantString(value) {
@@ -97,15 +97,15 @@ function setup(){
     var cw, ch;
 
     if(or > cr){
-        ch = innerHeight;
+        ch = innerHeight-50;
         cw = round(ch*cr);
     }
     else{
-        cw = innerWidth;
+        cw = innerWidth-50;
         ch = round(cw/cr);
     }
 
-    canvas = createCanvas(cw-50, ch-50, WEBGL);
+    canvas = createCanvas(cw, ch, WEBGL);
     canvas.id('maincanvas');
 
     var p5Canvas = document.getElementById("maincanvas");
@@ -157,7 +157,7 @@ function setup(){
     }
     else{
         initSim();
-        var thth = round(random(3, 40))
+        var thth = round(random(20, 25))
         for(var k = 0; k < 46; k++){
             if(k == thth){
                 engine.gravity.x = 0;
@@ -299,7 +299,6 @@ function prepareFbos(){
         textAlign(CENTER, CENTER);
         noStroke();
         fill(0);
-        textSize(34);
         text(c, 0, 0);
         cfbo.end();
 
@@ -382,19 +381,19 @@ function showall(){
 }
 
 function windowResized() {
-    var or = windowWidth/windowHeight;
+    var or = innerWidth/innerHeight;
     var cr = resx / resy;
     var cw, ch;
 
     if(or > cr){
-        ch = windowHeight;
+        ch = innerHeight-50;
         cw = round(ch*cr);
     }
     else{
-        cw = windowWidth;
+        cw = innerWidth-50;
         ch = round(cw/cr);
     }
-    resizeCanvas(cw-50, ch-50, true);
+    resizeCanvas(cw, ch, true);
     
     var p5Canvas = document.getElementById("maincanvas");
     var w = cw;
@@ -417,10 +416,10 @@ var randomstring = function(){
 function drawText(){
 
     clear();
-    textSize(18);
+    textSize(14);
     background(.05);
     background(.65, .1,.2);
-    background(.65);
+    background(.78);
     push();
     //scale(2.);
     noStroke();
@@ -434,8 +433,7 @@ function drawText(){
         var y = rr*sin(a);
     }*/
 
-    if (variant == 3) footer('.');
-    else footer();
+    footer('*');
 
     //if(variant == 0) filledRectangles();
     if(variant == 0) textOnCurve(true);
@@ -453,7 +451,7 @@ function drawText(){
         //runSim();
         //drawSim(1);
     }
-    if (variant == 5) textParallels();
+    if (variant == 5) filledRectangles();
 
 
     pop();
@@ -562,6 +560,14 @@ function polyToColliders(poly){
 
 var colpolys = [];
 
+function rotateArr(arr, num){
+    for(var k = 0; k < num; k++){
+        var t = arr.pop();
+        arr = [t].concat(arr);
+    }
+    return arr;
+}
+
 function initSim(){
     
     engine = Engine.create()
@@ -603,9 +609,10 @@ function initSim(){
 
     grounds = [];
     var frq = random(0.005, 0.05);
-    var ruru = random(5, 50);
-    ruru = 10;
+    var ruru = map(pow(fxrand(), 2), 0, 1, 5, 25);
     var realized = 0;
+    var isLines = fxrand() < .5;
+    var hasHoles = fxrand() < .5;
     while(realized == 0){
         realized = 0;
         for(var x = 0; x < ruru; x += 1){
@@ -613,37 +620,46 @@ function initSim(){
             var colpoly = [];
             var rx = random(-(resx/2-50), (resx/2-50));
             var ry = random(-(resy/2-50), (resy/2-50));
-            var ang = floor(random(360/90))*90;
+            var ang = floor(random(360/45))*45;
             //ang = 0;
             var r = random(100, resy);
             var rx2 = rx + r*cos(radians(ang));
             var ry2 = ry + r*sin(radians(ang));
+            var rw = random(100, 300);
+            var rh = random(100, 300);
             if(rx2 > (resx/2-30)){
-                continue;
-                rx2 = resx/2 - 50;
+                //continue;
+                //rx2 = resx/2 - 50;
             }
             if(ry2 > (resy/2-30)){
-                continue;
-                ry2 = resy/2 - 50;
+                //continue;
+                //ry2 = resy/2 - 50;
             }
             if(rx2 < -(resx/2-30)){
-                continue;
-                rx2 = -resx/2 + 50;
+                //continue;
+                //rx2 = -resx/2 + 50;
             }
             if(ry2 < -(resy/2-30)){
-                continue;
-                ry2 = -resy/2 + 50;
+                //continue;
+                //ry2 = -resy/2 + 50;
             }
             realized++;
             //colpoly.push(createVector(x+map(power(noise(x*frq, 22.9), 3), 0, 1, -100, 100), y-300));
             //colpoly.push(createVector(x+map(power(noise(x*frq, 31.4), 3), 0, 1, -100, 100), y+300));
-            //colpoly.push(createVector(rx+rw/2, ry+rh/2+rh/2*random(-.5,.5)));
-            //colpoly.push(createVector(rx-rw/2, ry+rh/2+rh/2*random(-.5,.5)));
-            //colpoly.push(createVector(rx-rw/2, ry-rh/2+rh/2*random(-.5,.5)));
-            //colpoly.push(createVector(rx+rw/2, ry-rh/2+rh/2*random(-.5,.5)));
-            //colpoly.push(colpoly[0]);
-            colpoly.push(createVector(rx, ry));
-            colpoly.push(createVector(rx2, ry2));
+
+            if(isLines){
+                colpoly.push(createVector(rx, ry));
+                colpoly.push(createVector(rx2, ry2));
+            }
+            else{
+                colpoly.push(createVector(rx + rw / 2, ry + rh / 2 + rh / 2 * random(-.5, .5)));
+                colpoly.push(createVector(rx - rw / 2, ry + rh / 2 + rh / 2 * random(-.5, .5)));
+                colpoly.push(createVector(rx - rw / 2, ry - rh / 2 + rh / 2 * random(-.5, .5)));
+                colpoly.push(createVector(rx + rw / 2, ry - rh / 2 + rh / 2 * random(-.5, .5)));
+                colpoly = rotateArr(colpoly, floor(random(8)));
+                if(!hasHoles)
+                    colpoly.push(colpoly[0]);
+            }
             //grounds.push(Bodies.rectangle(rx, ry, rw, rh, {isStatic: true,label: "ground",friction: 1,frictionStatic: Infinity}));
             colpolys.push(colpoly);
 
@@ -674,7 +690,7 @@ function initSim(){
     //grounds.push(Bodies.rectangle(pos.x+ddim/2, pos.y+0, 10, ddim, {isStatic: true,label: "ground"+(it++),friction: 1,frictionStatic: Infinity}));
     var ddx = 180;
     var ddy = 880;
-    var detx = 8;
+    var detx = 10;
     var dety = 10;
     var partsx = round(ddx/detx);
     var partsy = round(ddy/dety);
@@ -790,8 +806,12 @@ function runSim(){
 }
 
 function drawSim(flag){
-    textSize(16);
     push();
+    //textSize(16);
+    var ola;
+    ola = 'xyz';
+    ola = 'aeorgcxI';
+    ola = ola[floor(fxrand()*ola.length)];
     for (var i = 0; i < bodies.length; i += 1) {
         var vertices = bodies[i].vertices;
 
@@ -825,6 +845,7 @@ function drawSim(flag){
         var lettr = letters[floor(random(letters.length))];
         var lettr = letters[i%letters.length];
         lettr = 'a';
+        lettr = ola[i % ola.length];
         if('acemnosuvwxz'.includes(lettr)){
             lifty = -3;
         }
@@ -847,8 +868,18 @@ function drawSim(flag){
             fill(0);
 
         if(bodies[i].position.x < resx/2-35 && bodies[i].position.y < resy/2-35 && bodies[i].position.x > -resx/2+35 && bodies[i].position.y > -resy/2+35){
+            fill(0.780);
+            text(lettr, liftx + 2*random(-1,1), lifty + 2*random(-1,1));
+            text(lettr, liftx + 2*random(-1,1), lifty + 2*random(-1,1));
+            text(lettr, liftx + 2*random(-1,1), lifty + 2*random(-1,1));
+            text(lettr, liftx + 2*random(-1,1), lifty + 2*random(-1,1));
+            text(lettr, liftx + 2 * random(-1, 1), lifty + 2 * random(-1, 1));
+            text(lettr, liftx + 2*random(-1,1), lifty + 2*random(-1,1));
+            text(lettr, liftx + 2*random(-1,1), lifty + 2*random(-1,1));
+            text(lettr, liftx + 2 * random(-1, 1), lifty + 2 * random(-1, 1));
+            fill(0);
             text(lettr, liftx, lifty);
-            text(lettr, liftx+random(-.5,.5), lifty+random(-.5,.5));
+            text(lettr, liftx + random(-.5, .5), lifty + random(-.5, .5));
         }
         stroke(.65);
         //rect(0, 0, 20, 20);
@@ -873,7 +904,9 @@ function drawSim(flag){
     noStroke();
     fill(0);
 
-    var symbs = "*#";
+    var symbs = "C";
+    symbs = '.,:+>roaexwmwxeaor<+:,.';
+
     var symb = symbs[floor(random(symbs.length))];
 
     for(var kk = 0; kk < colpolys.length; kk++){
@@ -890,6 +923,9 @@ function drawSim(flag){
                 var p = map(pa, 0, parts, 0, 1);
                 var x = lerp(pt.x, npt.x, p);
                 var y = lerp(pt.y, npt.y, p);
+
+                if (x > resx / 2 - 30 || y > resy / 2 - 30 || x < -resx / 2 + 30 || y < -resy / 2 + 30)
+                    continue
                 
                 var liftx = 0;
                 var lifty = 0;
@@ -1076,46 +1112,77 @@ function getCompositionImpl(){
     ]
 
     var rules = [];
-    for (var k = 0; k < 15; k++) {
+    for (var k = 0; k < 10; k++) {
         var v1 = round(random(3, 30));
         var v2 = round(random(3, 30));
-        var v5 = random(1, 8);
+        var v5 = random(.1,2);
         var trules = [
+            '(X+Y)%1.0',
+            '(X*Y)%1.0',
+            '(1-X)%1.0',
+            '(1-Y)%1.0',
+            'pow(X,' + random(.5, 2) + ')%1.0',
+            'pow(X,Y)%1.0',
+            '(.5+.5*sin(' + random(.1, .52) + '*X + ' + random(.1, .52) + '*Y + ' + random(.1, .52) + '))%1.0',
+            'noise(X*' + random(.1, 2) + ', Y*' + random(.1, 2) + ')%1.0',
+            '(round(X*' + '10*Y' + ')/' + '10*Y' + ')%1.0',
+            '(X+Y)%1.0',
+            '(X*Y)%1.0',
+            '(X*' + random(.1, 10) + ')%1.0',
+            '(Y*' + random(.1, 10) + ')%1.0',
+            '(X-Y)%1.0',
+            '(Y-X)%1.0',
+            '(X+' + random(.1, 5) + ')%1.0',
+            '(Y+' + random(.1, 5) + ')%1.0',
+            'pow(X,' + random(.5, 2) + ')%1.0',
+            'power(X,' + random(.5, 2) + ')%1.0',
+            'pow(X,Y)%1.0',
+            'power(X,Y)%1.0',
+            'sqrt((X-.5)*(X-.5)-(Y-.5)*(Y-.5))%1.0',
+            '(.5+.5*sin(' + random(.1, .3) + '*X))%1.0',
+            '(.5+.5*sin(' + random(.1, .3) + '*Y))%1.0',
+            '((X%Y)/Y)%1.0',
+            '((Y%X)/X)%1.0',
+            '((X%' + v1 + ')/' + v1 + ')%1.0',
+            '((Y%' + v2 + ')/' + v2 + ')%1.0',
+            'abs(X)%1.0',
+            'abs(Y)%1.0',
+            '(((X*' + v5 + ')&(Y*' + v5 + '))/' + v5 + ')%1.0',
+            '(((X*' + v5 + ')|(Y*' + v5 + '))/' + v5 + ')%1.0',
+            '(((X*' + v5 + ')^(Y*' + v5 + '))/' + v5 + ')%1.0',
+            '(1/X)%1.0',
+            '(1/Y)%1.0',
+        ]
+        var trules1 = [
             '(X+Y)',
+            '(X-Y)',
+            '(Y-X)',
             '(X*Y)',
+            '(X/Y)',
+            '(Y/X)',
             '(-X)',
             '(-Y)',
-            'pow(X,' + random(.5, 2) + ')',
-            'pow(X,Y)',
-            '(.5+.5*sin(' + random(.1, .52) + '*X + ' + random(.1, .52) + '*Y + ' + random(.1, .52) + '))',
-            'noise(X*' + random(.1, 2) + ', Y*' + random(.1, 2) + ')',
-            '(round(X*'+'10*Y'+')/'+'10*Y'+')',
+            '(1/X)',
+            '(1/Y)',
+        ]
+        var trules2 = [
             '(X+Y)',
-            '(X*Y)',
-            '(X*' + random(.1, 10) + ')',
-            '(Y*' + random(.1, 10) + ')',
             '(X-Y)',
-            '(X+' + random(.1, 5) + ')',
-            '(Y+' + random(.1, 5) + ')',
-            'pow(X,' + random(.5, 2) + ')',
-            'pow(X,Y)',
-            'sqrt((X-.5)*(X-.5)-(Y-.5)*(Y-.5))',
-            '(.5+.5*sin(' + random(2, 10) + '*X))',
-            '(.5+.5*sin(' + random(2, 10) + '*Y))',
-            '((X%Y)/Y)',
-            '((X%' + v1 + ')/' + v1 + ')',
-            '((Y%' + v2 + ')/' + v2 + ')',
-            'abs(X)',
-            'abs(Y)',
+            '(Y-X)',
+            '(X*Y)',
+            '(X/Y)',
+            '(Y/X)',
+            '(-X)',
+            '(-Y)',
+            '(1/X)',
+            '(1/Y)',
             '(((X*' + v5 + ')&(Y*' + v5 + '))/' + v5 + ')',
             '(((X*' + v5 + ')|(Y*' + v5 + '))/' + v5 + ')',
             '(((X*' + v5 + ')^(Y*' + v5 + '))/' + v5 + ')',
-            'myf1(X, Y, ' + random(5, 50) + ')',
-            'noise(X*' + random(.1, 2) + ', Y*' + random(.1, 2) + ')',
-            '(1/X)',
-            '(1/Y)',
-            '(X/Y)',
-            '(Y/X)',
+            '(.5+.5*sin(' + random(.1,.2) + '*X))',
+            '(.5+.5*sin(' + random(.1,.2) + '*Y))',
+            'power(X, 3)',
+            'power(Y, 3)',
         ]
         rules = rules.concat(trules);
     }
@@ -1125,8 +1192,11 @@ function getCompositionImpl(){
         var rrules = rules;
         var ns = '';
         for(var i = 0; i < s.length; i++){
-                var chc = floor(random(rrules.length));
             if(s[i] == 'X' || s[i] == 'Y'){
+                var chc = floor(random(rrules.length));
+                while (!rrules[chc].includes(s[i])){
+                    chc = floor(random(rrules.length));
+                }
                 ns += rrules[chc]
             }
             else{
@@ -1164,16 +1234,18 @@ function getComposition(nx, ny, rx, ry, scan){
         for(var j = 0; j < nn; j++){
             for(var i = 0; i < round(nn*resx/resy); i++){
                 var X = ((i+rx)%nn+1)/nn;
-                var Y = ((j+ry)%nn+1)/nn;
-                rez = (eval(comp) + 0.)%1;
-                if(isNaN(rez))
+                var Y = ((j+ry)%nn+1)/nn*resy/resx;
+                //rez = (eval(comp) + 0.)%1;
+
+                rez = round(eval(comp) * 100);
+                if (isNaN(rez))
                     zas = true;
                 vals.push(rez);
             }
         }
         sum = 0;
         for(var k = 0; k < vals.length; k++){
-            if(!isNaN(vals[k]))
+            if (!isNaN(vals[k]) && isFinite(vals[k]))
                 sum += vals[k];
         }
         avgr = sum/vals.length;
@@ -1183,13 +1255,10 @@ function getComposition(nx, ny, rx, ry, scan){
             sumd += abs(vals[k]-avgr);
             maxd = max(maxd, abs(vals[k]-avgr));
         }
-        print("he", sum)
-        print("he2", maxd)
         avgd = sumd/vals.length;
         //print('hello')
 
     }
-    print(avgr, avgd, maxd)
     return comp;
 }
 
@@ -1227,7 +1296,7 @@ function mathComposition(){
     var rind = floor(random(1, letters.length-1));
     var ltrs = letters.slice(0, rind) + letters.slice(0, rind);
 
-    var det = 10;
+    var det = 8;
     var nx = (resx-50)/det;  
     var ny = (resy-50)/det;  
     var dw = nx*det;
@@ -1236,27 +1305,37 @@ function mathComposition(){
     var rx = floor(random(nx*3))*0;
     var ry = floor(random(ny*3))*0;
     var scan = random(nx/10, nx/2);
-    scan = nx;
+    scan = nx*1.;
     var comp = getComposition(nx, ny, rx, ry, scan);
-    //var comp2 = getComposition(nx, ny, rx, ry, scan);
-    print(comp)
+    var comp2 = getComposition(nx, ny, rx, ry, scan);
+    //print(comp)
 
     var ola = '.-/=*caxwKHR';
     ola = ' .,:+>roaexwW';
     ola = ' .^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
     ola = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^ ';
-    ola = ' .,:+>roaexwWwxeaor<+:,.';
+    if(fxrand() < .5)
+        ola = ' .,:+>roaexwmwxeaor<+:,.';
 
     var olash = floor(random(ola.length));
+
+    var fx = fxrand() < .5;
+    var fy = fxrand() < .5;
 
     for (var j = 1; j < ny-1; j++){
         for(var i = 1; i < nx-1; i++){
             var X = ((i+rx)%nx+1)/scan;
-            var Y = ((j+ry)%ny+1)/scan*resy/resx;
+            var Y = ((j + ry) % ny + 1) / scan * resy / resx;
+            if (fx) {
+                X = 1. - ((i + rx) % nx + 1) / scan;
+            }
+            if (fy) {
+                Y = 1. - ((j + ry) % ny + 1) / scan * resy / resx;
+            }
             rez = round(eval(comp) * 100);
             //rez = round((atan(eval(comp)) / PI + .5) * 1000);
 
-            rez2 = round(eval(comp) * 100);
+            rez2 = round(eval(comp2) * 100);
 
 
             var x = map(i, 0, nx, 0, dw) - (nx-.5)/2*det;
@@ -1266,6 +1345,8 @@ function mathComposition(){
             //rect(x, y, det, det);
             if (isNaN(rez))
                 rez = 0;
+            if (!isFinite(rez))
+                rez = round(fxrand()*100);
             var ltr = ola[abs(rez+olash)%ola.length];
             /*ltr = ltrs[floor(rez*ltrs.length)]
             if(rez < .33)
@@ -1279,21 +1360,13 @@ function mathComposition(){
             
             var liftx = 0;
             var lifty = 0;
-            if('acemnosuvwxz'.includes(ltr)){
-                //lifty = -3;
-            }
-            if('bdhk'.includes(ltr)){
-                //lifty = -2;
-            }
-            if('gpqy'.includes(ltr)){
-                //lifty = -4;
-            }
+           
 
             push();
             //var cc = map2(floor(random(3))/9.);
             //cc = saturatecol(cc, -.2+random(-.05, .05));
             //cc = brightencol(cc, random(-.05, .05));
-            //(14);
+            textSize(13);
             translate(x+liftx, y+lifty);
 
             push();
@@ -1303,7 +1376,7 @@ function mathComposition(){
             va = abs(rez) / 1000.;
             va2 = abs(rez2) / 1000.;
             if (isNaN(va))
-                va = 0.;
+                va = fxrand()
             if (!isFinite(va))
                 va = fxrand();
             if (isNaN(va2))
@@ -1355,6 +1428,12 @@ function textOnPoly(){
     var miny = 10000;
     var maxx = -10000;
     var maxy = -10000;
+    var ccc = 0;
+    var isStiff = fxrand() < .25;
+    if(fxrand() < .5 && !isStiff){
+        ccc = random(111, 222);
+    }
+    
     for(var k = 0; k < 42; k++){
         var w = round(random(100, 400));
         var h = round(100*400/w) * random(.9, 1.1)*3.5;
@@ -1364,12 +1443,28 @@ function textOnPoly(){
         w = 100 + 400*(power(noise(k*.05, 205.422), 4));
         h = 100 + 900*(power(noise(k*.05, 680.71), 4));
         x = (resx - w - 50)*(-.5 + power(noise(k*.05, 55.422), 4));
-        y = (resy - h - 50)*(-.5 + power(noise(k*.05, 21.341), 4));
+        y = (resy - h - 50 - ccc*2)*(-.5 + power(noise(k*.05, 21.341), 4));
+
+        ccc = 0;
+
+        if(isStiff){
+            w = random(33, 200);
+            h = resy - 50 * 2;
+            x = random(-resx / 2 + w / 2 + 50, resx / 2 - w / 2 - 50);
+            y = 0;
+            if (fxrand() < .5) {
+                w = resx - 50 * 2;
+                h = random(33, 200);
+                x = 0;
+                y = random(-resy / 2 + h / 2 + 50, resy / 2 - h / 2 - 50);
+            }
+        }
+
         var pts = [];
-        pts.push(createVector(x-w/2, y-h/2));
-        pts.push(createVector(x+w/2, y-h/2));
-        pts.push(createVector(x+w/2, y+h/2));
-        pts.push(createVector(x-w/2, y+h/2));
+        pts.push(createVector(x-w/2, y-h/2+random(-ccc,ccc)));
+        pts.push(createVector(x+w/2, y-h/2+random(-ccc,ccc)));
+        pts.push(createVector(x+w/2, y+h/2+random(-ccc,ccc)));
+        pts.push(createVector(x-w/2, y+h/2+random(-ccc,ccc)));
         polys.push(pts);
         for(var qq = 0; qq < pts.length; qq++){
             var p = pts[qq];
@@ -1412,6 +1507,7 @@ function textOnPoly(){
     }
 
     var allpolypts = [];
+    var hasblack = fxrand() < .33;
     for(var q = 0; q < polys.length; q++){
         var pts = polys[q];
         var hasf = letters[floor(random(fxrand() * letters.length))];
@@ -1421,8 +1517,7 @@ function textOnPoly(){
         for(var k = 0; k < pts.length; k++){
             var pt = pts[(k+0)%pts.length];
             var npt = pts[(k+1)%pts.length];
-    
-            var det = 14;
+            var det = 11;
             var d = pt.dist(npt);
             var parts = 2+round(d/det);
             for(var pa = 0; pa < parts; pa++){
@@ -1443,7 +1538,7 @@ function textOnPoly(){
                     
                 var zas = false;
                 for(var bbb = 0; bbb < allpolypts.length-1; bbb++){
-                    if(dist(x, y, allpolypts[bbb].pos.x, allpolypts[bbb].pos.y) < 15){
+                    if(dist(x, y, allpolypts[bbb].pos.x, allpolypts[bbb].pos.y) < 13){
                         if(q == 0){
                                 zas = true;
                         }
@@ -1477,7 +1572,7 @@ function textOnPoly(){
 
 
                 //if(noise(q) < .3 && q < polys.length-1){
-                if(q == 3 || q == 20){
+                if((q == 3 || q == 20) && hasblack){
                     push();
                     translate(x, y, -5);
                     fill(0.004);
@@ -1782,7 +1877,7 @@ function textOnCurve(isHobby=true){
         var pt = pts[(k+0)%pts.length];
         var npt = pts[(k+1)%pts.length];
 
-        var det = 13;
+        var det = 12;
         var d = pt.dist(npt);
         var parts = 2+round(d/det);
         for(var pa = 0; pa < parts; pa++){
@@ -1852,7 +1947,7 @@ function textOnCurve(isHobby=true){
         if(k > 1){
             for(var w = 0; w < k-1; w++){
                 var wpt = hobbypts[w];
-                if(wpt.dist(pt) < 10)
+                if(wpt.dist(pt) < 9)
                     zas = true;
             }
         }
@@ -1929,23 +2024,86 @@ function filledRectangles(){
     var hasrowvar = fxrand() < -.5;
     var frq = random(.14, 1);
     var reduce = 10;
-    for(var it = 0; it < 18; it++){
+    var coors = [];
+    var minx = 10000;
+    var miny = 10000;
+    var maxx = -10000;
+    var maxy = -10000;
+
+    var cpolys = []
+    for(var it = 0; it < 50; it++){
         var rx = random(100, 400)*1.5;
         var ry = rx*random(1.3, 1.5);
         var x = rnoise(it*frq, -(resx/2-rx/2-100), (resx/2-rx/2-100));
         var y = rnoise(it*frq+314.31, -(resy/2-ry/2-100), (resy/2-ry/2-100));
+
+        rx = 100 + 400 * (power(noise(it * .05, 205.422), 4));
+        ry  = 100 + 900 * (power(noise(it * .05, 680.71), 4));
+        x = (resx - rx - 50) * (-.5 + power(noise(it * .05, 55.422), 4));
+        y = (resy - ry - 50) * (-.5 + power(noise(it * .05, 21.341), 4));
+
         var poly = [];
-        poly.push(createVector(x-rx/2, y-ry/2));
-        poly.push(createVector(x+rx/2, y-ry/2));
-        poly.push(createVector(x+rx/2, y+ry/2));
-        poly.push(createVector(x-rx/2, y+ry/2));
+        poly.push(createVector(x - rx / 2, y - ry / 2));
+        poly.push(createVector(x + rx / 2, y - ry / 2));
+        poly.push(createVector(x + rx / 2, y + ry / 2));
+        poly.push(createVector(x - rx / 2, y + ry / 2));
+
+        for (var qq = 0; qq < poly.length; qq++) {
+            var p = poly[qq];
+            if (p.x < minx) minx = p.x;
+            if (p.y < miny) miny = p.y;
+            if (p.x > maxx) maxx = p.x;
+            if (p.y > maxy) maxy = p.y;
+        }
+        cpolys.push(poly);
+    }
+
+    if(fxrand() < .25){
+        cpolys = []
+        for (var it = 0; it < 35; it++) {
+            var rx = random(30, 200);
+            var ry = resy-60;
+            var x = random(-resx / 2 + rx/2 + 30, resx / 2 - rx/2 - 30);
+            var y = 0;
+            if(fxrand() < .5){
+                rx = resx-60;
+                ry = random(30, 200);
+                x = 0;
+                y = random(-resy / 2 + ry/2 + 30, resy / 2 - ry/2 - 30);
+            }
+
+            var poly = [];
+            poly.push(createVector(x - rx / 2, y - ry / 2));
+            poly.push(createVector(x + rx / 2, y - ry / 2));
+            poly.push(createVector(x + rx / 2, y + ry / 2));
+            poly.push(createVector(x - rx / 2, y + ry / 2));
+
+            for (var qq = 0; qq < poly.length; qq++) {
+                var p = poly[qq];
+                if (p.x < minx) minx = p.x;
+                if (p.y < miny) miny = p.y;
+                if (p.x > maxx) maxx = p.x;
+                if (p.y > maxy) maxy = p.y;
+            }
+            cpolys.push(poly);
+        }
+    }
+
+    var midx = (maxx + minx) / 2;
+    var midy = (maxy + miny) / 2;
+
+    for(var it = 0; it < cpolys.length; it++){
+
+        var poly = cpolys[it];
+
         var polypts;
-        var det = random(9, 13)*0 + 11;
+        var det = random(9, 13)*0 + 9;
         polypts = getRectFillPoints(poly, polys, det, reduce);
         polys.push(poly);
     
         push();
         translate(0, 0, -it*4);
+        translate(-midx, -midy);
         
         var polyrr = reducePoly(poly, 10);
         noStroke();
@@ -1969,18 +2127,28 @@ function filledRectangles(){
         //fill(...map2(round(fxrand()*5)/5.));
         fill(0.004);
         noStroke();
+
+        var ola = '.-/=*caxwKHR';
+        ola = '.,:+>roaexwW';
+        ola = '.^",:;!i><~+-?][}{1)(/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*MW&8B$';
+        ola = '$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^';
+        if (fxrand() < 1.5)
+            ola = '.,:+>roaexwmwxeaor<+:,.';
+
+        var olash = floor(random(ola.length));
+
         for(var k = 0; k < polypts.length; k++){
             var p = polypts[k].pos;
             var i = polypts[k].i;
             var j = polypts[k].j;
             var idx;
             if(frompoint){
-                idx = floor(3.213*letters.length*power(noise(i*3.1313*hasrowvar, it), 3)) % letters.length;
+                idx = floor(3.213*ola.length*power(noise(i*3.1313*hasrowvar, it), 3)) % ola.length;
             }
             else{
-                idx = floor(3.213*letters.length*power(noise(j*3.1313*hasrowvar, it), 3)) % letters.length;
+                idx = floor(3.213*ola.length*power(noise(j*3.1313*hasrowvar, it), 3)) % ola.length;
             }
-            var rang = radians(map(power(noise(j*3.1313), 3), 0, 1, -10, 10));
+            var rang = radians(map(power(noise(j*3.1313), 3), 0, 1, -1, 1));
             
             var x = p.x;
             var y = p.y;
@@ -1994,19 +2162,24 @@ function filledRectangles(){
             rotate(rang);
             var liftx = 0;
             var lifty = 0;
-            var lettr = letters[idx];
-            if('acemnosuvwxz'.includes(lettr)){
+            var lettr = ola[idx];
+
+            if ('acemnosuvwxz:;/\\'.includes(lettr)) {
                 lifty = -3;
             }
-            if('bdhk'.includes(lettr)){
+            if ('bdhk+-'.includes(lettr)) {
                 lifty = -2;
             }
-            if('gpqy'.includes(lettr)){
+            if ('gpqy'.includes(lettr)) {
                 lifty = -4;
             }
+            if (',._'.includes(lettr)) {
+                lifty = -8;
+            }
+
             //var cc = map2(floor(random(3))/9.);
             //cc = saturatecol(cc, -.2+random(-.05, .05));
-            cc = brightencol(cc, random(-.05, .05));
+            //cc = brightencol(cc, random(-.05, .05));
             //fill(0);
             text(lettr, liftx, lifty);
             text(lettr, liftx+random(-.5,.5), lifty+random(-.5,.5));
@@ -2722,7 +2895,7 @@ function keyPressed(){
           }
         }
         img.updatePixels();
-        img.save('outputTest', 'png');
+        img.save('output_' + fxhash, 'png');
     }
 }
 

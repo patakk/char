@@ -6,7 +6,7 @@ html, body {
   height: 100vh;
   overflow: hidden;
   touch-action: none;
-  background-color: #757575;
+  background-color: #9b9b9b;
 
 
   display: flex;
