@@ -48,19 +48,32 @@ var pts = [];
 
 //var variant = Math.floor(fxrand()*5);
 
-var variant = search.get('variant') || Math.floor(fxrand() * 6);
+var choices = [
+    0, 0,
+    1, 1, 
+    2, 2, 
+    3,
+    4, 4,
+    5, 5,
+]
+
+let searchh = new URLSearchParams(window.location.search)
+var variant = searchh.get('variant') || choices[Math.floor(fxrand()*choices.length)];
 
 if(variant > 5)
-    variant = Math.floor(fxrand() * 6);
+    variant = choices[Math.floor(choices.length)];
+
+if (fxhash.includes('ErL9qSm'))
+    variant = 2;
 
 ///////
 function getVariantString(value) {
-    if (value == 0) return "hobby";
-    if (value == 1) return "spikes";
-    if (value == 2) return "windows";
+    if (value == 0) return "entangled";
+    if (value == 1) return "sharp";
+    if (value == 2) return "portals";
     if (value == 3) return "function composition";
-    if (value == 4) return "simulation";
-    if (value == 5) return "simulation";
+    if (value == 4) return "sim";
+    if (value == 5) return "planes";
 }
 
 window.$fxhashFeatures = {
@@ -80,7 +93,7 @@ function preload() {
 var deadness = map(fxrand(), 0, 1, 3, 16);
 var slant = map(fxrand(), 0, 1, 11, 51);
 
-function getRandomRYB(p){
+/*function getRandomRYB(p){
     if(!p)
         p = fxrand();
     p = p%1.;
@@ -88,7 +101,7 @@ function getRandomRYB(p){
     cryb = saturatecol(cryb, map(fxrand(), 0, 1, -.3, .3));
     cryb = brightencol(cryb, map(fxrand(), 0, 1, -.3, .3));
     return cryb;
-}
+}*/
 
 function setup(){
     pixelDensity(2);
@@ -690,8 +703,8 @@ function initSim(){
     //grounds.push(Bodies.rectangle(pos.x+ddim/2, pos.y+0, 10, ddim, {isStatic: true,label: "ground"+(it++),friction: 1,frictionStatic: Infinity}));
     var ddx = 180;
     var ddy = 880;
-    var detx = 10;
-    var dety = 10;
+    var detx = 9;
+    var dety = 9;
     var partsx = round(ddx/detx);
     var partsy = round(ddy/dety);
     detx = ddx/partsx;
@@ -1384,14 +1397,6 @@ function mathComposition(){
             if (!isFinite(va2))
                 va2 = fxrand();
             
-            var c1 = map2((va + .05) % 1.);
-            var c2 = map2((va + .05) % 1.);
-            c1 = brightencol(c1, .5*(-.5 + va2))
-            c2 = brightencol(c2, .5*(-.5 + va2))
-            fill(...c1);
-            //rect(0, 0, 10, 10);
-            fill(...c2);
-            //rect(0, 0, 5, 5);
             pop();
 
             fill(0.01);
@@ -1507,7 +1512,7 @@ function textOnPoly(){
     }
 
     var allpolypts = [];
-    var hasblack = fxrand() < .33;
+    var hasblack = fxrand() < .5;
     for(var q = 0; q < polys.length; q++){
         var pts = polys[q];
         var hasf = letters[floor(random(fxrand() * letters.length))];
@@ -1787,7 +1792,7 @@ function textOnCurve(isHobby=true){
         spread = .99;
     }
     var ququ = 144 * spread;
-    var ququ = random(50, 200);
+    var ququ = random(100, 200);
     var kfrq = random(.08, .4);
     
     var pts = [];
@@ -1844,7 +1849,7 @@ function textOnCurve(isHobby=true){
         area = (maxx - minx) * (maxy - miny);
         itt+=1;
     }
-    if(ququ < 100){
+    if(ququ < 130){
         var zoom = random(1, 2);
         var zoomed = [];
         for (var k = 0; k < pts.length; k++) {
@@ -1877,7 +1882,7 @@ function textOnCurve(isHobby=true){
         var pt = pts[(k+0)%pts.length];
         var npt = pts[(k+1)%pts.length];
 
-        var det = 12;
+        var det = 10.8;
         var d = pt.dist(npt);
         var parts = 2+round(d/det);
         for(var pa = 0; pa < parts; pa++){
@@ -1924,7 +1929,7 @@ function textOnCurve(isHobby=true){
     var lettr = ola[floor(random(ola.length))];
     var fff = random(.001, .03);
     var modk = round(random(10, 200));
-    print(ola, modk)
+    //print(ola, modk)
     var shf = floor(random(ola.length));
     for(var k = 0; k < hobbypts.length; k++){
         var zas = false;
@@ -2060,7 +2065,8 @@ function filledRectangles(){
 
     if(fxrand() < .25){
         cpolys = []
-        for (var it = 0; it < 35; it++) {
+        var nunu = round(random(4, 35));
+        for (var it = 0; it < nunu; it++) {
             var rx = random(30, 200);
             var ry = resy-60;
             var x = random(-resx / 2 + rx/2 + 30, resx / 2 - rx/2 - 30);
@@ -2557,107 +2563,6 @@ function min(a, b){
     return b;
 }
 
-
-/*
-var cshif = fxrand();
-var range = Math.round(2 + fxrand()*7)*45/360;
-var invsat = Math.round(fxrand());
-var invs1 = Math.round(fxrand());
-var invb1 = Math.round(fxrand());
-var invs2 = Math.round(fxrand());
-var invb2 = Math.round(fxrand());
-var invs3 = Math.round(fxrand());
-var fff = map(fxrand(), 0, 1, .05, .4);
-var aaa = fxrand()*3.14;
-var ooo = Math.round(1+3*fxrand());
-var ppp = 1;
-function drawColorArray(pgr, index=0){
-
-    //COLORS
-     pgr.push();
-     var nn = 30;
-     var dd = 500;
-     var rr = dd/nn;
-     pgr.noStroke();
-     var nc = round(random(3, 12));
-     nc = 3 + index%5;
-     nc = round(8 + 5*sin(index*fff+aaa));
-     for(var k = 0; k < nn; k++){
-         var p = map(k, 0, nn, 0, 1);
-         var x = map(k, 0, nn-1, -dd/2, dd/2);
-         var y = 0;
- 
-         var ang = ((k+1)%nc)*(360/nc)/360 + cshif;
-
-         if((k+1)%nc < nc-2){
-            ang = (((k+1)%nc)*(360/nc)/360*range)%range + cshif;
-         }
-         else if((k+1)%nc < nc-1){
-            ang = max(90/360., (((k+1)%nc)*(360/nc)/360*range)%range+15/360.) + cshif;
-         }
-         else{
-            ang = 180/360. + cshif;
-         }
-
-         var pp = ang%1.;
-
-         var cryb = map2(p);
-         pgr.fill(...cryb);
-         //pgr.rect(x, y-rr*8, rr+1, rr+1);
-         
-         var cryb = map2(ang);
-         if((k+1)%nc < nc-2) cryb = saturatecol(cryb, .4*(-1+2*invsat)*(-1+2*invs1));
-         if((k+1)%nc < nc-2) cryb = brightencol(cryb, +.0*(-1+2*invsat)*(-1+2*invb1));
-         if((k+1)%nc == nc-1) cryb = saturatecol(cryb, -.5*(-1+2*invsat)*(-1+2*invs2));
-         if((k+1)%nc == nc-1) cryb = brightencol(cryb, -.2*(-1+2*invsat)*(-1+2*invb2));
-         if((k+1)%nc == nc-2) cryb = saturatecol(cryb, +.5*(-1+2*invsat)*(-1+2*invs3));
-         if((k+1)%nc == nc-2) cryb = brightencol(cryb, +.0);
-         //if(k%nc == nc-1) cryb = saturatecol(cryb, .5*(invsat));
-         //if(k%nc == nc-2) cryb = saturatecol(cryb, .5*(invsat));
-         //if(k%nc == nc-1) cryb = brightencol(cryb, -.2*(1.-invsat));
-         //if(k%nc == nc-2) cryb = brightencol(cryb, -.2*(1.-invsat));
-         pgr.fill(...cryb);
-
-         pgr.fill(...getRandomColor(round(ppp*((k+1)*(k+1)*1*(index+1)+index+k*ooo))));
-         pgr.rect(x, y-rr*4*0, rr+1, rr*1+2);
-
-         var chsv = hsv2rgb(p, 1., 1.);
-         pgr.fill(...chsv);
-         //pgr.rect(x, y+rr*4, rr+1, rr+1);
-         
-         var chsv = hsv2rgb(ang, 1., 1.);
-         if(k%nc == nc-1) cryb = hsv2rgb(ang, .5, .8);
-         if(k%nc == nc-2) cryb = hsv2rgb(ang, 1.2, 1.2);
-         pgr.fill(...chsv);
-         //pgr.rect(x, y+rr*8, rr+1, rr+1);
-         
-     }
-
-     pg.fill(1.);
-     pg.noStroke();
-     for(var k = 0; k < nc; k++){
-        
-        var ang = (k%nc)*(360/nc)/360 + cshif;
-
-        if(k%nc < nc-2){
-           ang = (k*(360/nc)/360*range)%range + cshif;
-        }
-        else if(k%nc < nc-1){
-           ang = max(90/360., (k*(360/nc)/360*range)%range+15/360.) + cshif;
-        }
-        else{
-           ang = 180/360. + cshif;
-        }
-
-        var pp = ang%1.;
-
-        var x = map(pp, 0, 1-1./nn, -(dd/2-rr/2), (dd/2-rr/2));
-        //pg.ellipse(x, 0-rr*8-rr/2, 4, 4);
-        //pg.ellipse(x, 0+rr*4-rr/2, 4, 4);
-     }
-     pgr.pop();
-}
-*/
 
 function subdividePath(path, det){
     var newpath = [];
